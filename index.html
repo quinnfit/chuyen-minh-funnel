@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="vi" spellcheck="false">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Chuyển Mình: Shift Within</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,600;1,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060D1A;--bg2:#0A1628;--bg3:#0D1E3A;
+  --gold:#D4B896;--gold-dim:rgba(212,184,150,0.12);--gold-border:rgba(212,184,150,0.2);
+  --blue:#1B9FE8;--blue-dim:rgba(27,159,232,0.08);--blue-border:rgba(27,159,232,0.18);
+  --white:#FAFAFA;--w8:rgba(250,250,250,0.8);--w6:rgba(250,250,250,0.6);--w4:rgba(250,250,250,0.4);--w2:rgba(250,250,250,0.2);
+  --font:'Be Vietnam Pro',sans-serif;
+  --max:900px;
+  --r:0px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font);background:var(--bg);color:var(--white);overflow-x:hidden;line-height:1.75;}
+img{display:block;max-width:100%;}
+a{text-decoration:none;color:inherit;}
+
+.container{max-width:var(--max);margin:0 auto;padding:0 32px;}
+section{padding:80px 0;}
+.eyebrow{font-size:11px;letter-spacing:0.28em;color:var(--blue);font-weight:700;display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.eyebrow::before{content:'';width:18px;height:1px;background:var(--blue);flex-shrink:0;}
+.eyebrow.gold{color:var(--gold);}
+.eyebrow.gold::before{background:var(--gold);}
+.sec-title{font-size:clamp(26px,4vw,38px);font-weight:700;color:var(--white);line-height:1.2;margin-bottom:8px;}
+.sec-sub{font-size:16px;color:var(--w6);line-height:1.8;margin-bottom:0;}
+.gold-line{height:1px;background:linear-gradient(to right,transparent,var(--gold-border),transparent);}
+.blue-line{height:1px;background:linear-gradient(to right,transparent,var(--blue-border),transparent);}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:16px 36px;font-family:var(--font);font-size:15px;font-weight:700;letter-spacing:0.08em;cursor:pointer;border:none;transition:all 0.25s;text-align:center;}
+.btn-gold{background:var(--gold);color:var(--bg);}
+.btn-gold:hover{background:#C4A882;}
+.btn-outline{background:transparent;border:2px solid var(--gold);color:var(--gold);}
+.btn-outline:hover{background:var(--gold);color:var(--bg);}
+.btn-blue{background:var(--blue);color:var(--white);}
+.btn-blue:hover{background:#1589CC;}
+.btn-center{display:flex;justify-content:center;margin-top:28px;}
+
+/* HERO */
+.hero{width:100%;background:var(--bg);position:relative;overflow:hidden;min-height:100vh;display:grid;grid-template-columns:1fr 1fr;}
+.hero-bg{position:absolute;inset:0;background-image:url('https://res.cloudinary.com/dttzmbg8e/image/upload/v1779853642/hero_image_1_Quinn_gnkats.png');background-size:cover;background-position:center;filter:blur(8px) brightness(0.15);transform:scale(1.05);}
+.hero-left{position:relative;z-index:2;padding:80px 50px 80px 60px;display:flex;flex-direction:column;justify-content:center;}
+.hero-right{position:relative;z-index:2;overflow:hidden;}
+.hero-right img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block;min-height:100vh;}
+.hero-brand{font-size:11px;letter-spacing:0.28em;color:var(--gold);font-weight:700;display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+.hero-brand::before{content:'';width:18px;height:1px;background:var(--gold);}
+.hero-brand-sub{font-size:13px;letter-spacing:0.2em;color:var(--w4);margin-top:-14px;margin-bottom:24px;padding-left:28px;}
+.hero-h1{font-size:clamp(28px,4vw,46px);font-weight:700;color:var(--white);line-height:1.15;margin-bottom:20px;}
+.hero-h1 .hl-gold{color:var(--gold);}
+.hero-h1 .hl-blue{color:var(--blue);}
+.hero-sub{font-size:16px;color:var(--w6);line-height:1.8;margin-bottom:32px;}
+.hero-sub .hl{color:var(--gold);font-weight:600;}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;}
+.hero-stats{display:flex;gap:28px;margin-top:36px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.08);flex-wrap:wrap;}
+.hero-stat-num{font-size:28px;font-weight:700;color:var(--gold);line-height:1;}
+.hero-stat-label{font-size:11px;color:var(--w4);letter-spacing:0.08em;margin-top:4px;font-weight:600;}
+
+/* CTA BANNER */
+.cta-banner{background:var(--gold-dim);border-top:1px solid var(--gold-border);border-bottom:1px solid var(--gold-border);padding:16px 32px;display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;text-align:center;}
+.cta-banner p{font-size:14px;color:var(--w6);margin:0;font-weight:500;}
+.cta-banner strong{color:var(--gold);font-weight:700;}
+.cta-banner .btn{padding:10px 24px;font-size:13px;}
+
+/* HOOK */
+.hook{background:var(--bg);padding:80px 0;}
+.hook h2{font-size:clamp(28px,4.5vw,44px);font-weight:700;line-height:1.15;margin-bottom:24px;color:var(--white);}
+.hook h2 span{color:var(--blue);}
+.lead{font-size:17px;font-weight:500;color:var(--w8);line-height:1.9;max-width:740px;margin-bottom:16px;}
+.body-p{font-size:15px;font-weight:400;color:var(--w6);line-height:1.9;max-width:740px;margin-bottom:14px;}
+.gold-q{color:var(--gold);font-style:italic;font-weight:600;}
+.highlight{background:var(--blue-dim);border-left:3px solid var(--blue);padding:20px 24px;margin:26px 0;max-width:740px;}
+.highlight p{font-size:16px;font-weight:500;color:var(--white);line-height:1.8;}
+.highlight strong{color:var(--gold);font-weight:700;}
+
+/* STORY */
+.story-col{display:flex;flex-direction:column;gap:0;margin-top:48px;}
+.story-block-text{padding:36px 0;}
+.story-block-text p{font-size:16px;color:var(--w6);line-height:1.9;margin-bottom:14px;}
+.story-block-text p:last-child{margin-bottom:0;}
+.story-block-text em{color:var(--gold);font-style:italic;}
+.story-block-text strong{color:var(--white);font-weight:600;}
+.story-block-img{overflow:hidden;}
+.story-block-img img{width:100%;height:auto;display:block;}
+.story-divider{height:1px;background:rgba(255,255,255,0.06);margin:8px 0;}
+
+/* TRUTHS */
+.truth-list{display:flex;flex-direction:column;gap:60px;margin-top:48px;}
+.truth-item{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center;}
+.truth-item.rev{direction:rtl;}
+.truth-item.rev>*{direction:ltr;}
+.truth-num{font-size:72px;font-weight:800;color:rgba(212,184,150,0.07);line-height:0.9;margin-bottom:12px;}
+.truth-item h3{font-size:clamp(18px,2.5vw,24px);font-weight:700;color:var(--white);margin-bottom:14px;line-height:1.3;}
+.truth-item p{font-size:15px;color:var(--w6);line-height:1.9;margin-bottom:12px;}
+.truth-item strong{color:var(--white);font-weight:600;}
+.truth-img img{width:100%;height:auto;display:block;}
+
+/* PROMISE */
+.promise{background:var(--bg2);padding:80px 0;text-align:center;}
+.promise-quote{font-size:clamp(20px,3vw,28px);font-weight:600;line-height:1.5;max-width:700px;margin:0 auto 32px;color:var(--white);font-style:italic;}
+.promise-quote em{color:var(--gold);}
+
+/* TESTIMONIAL */
+.testi-section{background:var(--bg);padding:80px 0 0;}
+.slider-outer{position:relative;overflow:hidden;width:100%;margin-top:32px;}
+.slider-track{display:flex;transition:transform 0.55s cubic-bezier(0.4,0,0.2,1);will-change:transform;}
+.testi-card{flex-shrink:0;background:var(--bg);display:flex;justify-content:center;padding-bottom:40px;}
+.testi-inner{width:100%;max-width:700px;}
+@media(max-width:768px){
+  .testi-card{padding-left:0;padding-right:0;}
+  .testi-inner{max-width:100%;padding:0 20px;}
+}
+.testi-img-wrap{width:100%;overflow:hidden;}
+.testi-img-wrap img{width:100%;height:auto;display:block;object-fit:contain;background:var(--bg3);}
+.testi-body{padding:20px 0 24px;}
+.testi-tag{display:inline-block;background:rgba(27,159,232,0.1);border:1px solid rgba(27,159,232,0.2);color:var(--blue);font-size:11px;letter-spacing:0.1em;padding:5px 14px;margin-bottom:14px;font-weight:700;}
+.testi-quote{font-size:15px;font-weight:400;color:var(--w6);line-height:1.85;margin-bottom:14px;font-style:italic;padding-left:18px;position:relative;}
+.testi-quote::before{content:'"';position:absolute;left:0;top:-4px;font-size:2.2rem;color:var(--gold);line-height:1;}
+.testi-name{font-size:13px;color:var(--gold);letter-spacing:0.06em;font-weight:700;}
+.slider-controls{display:flex;align-items:center;justify-content:center;gap:20px;padding:16px 0 32px;}
+.slider-dots{display:flex;gap:8px;}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(212,184,150,0.22);border:none;cursor:pointer;padding:0;transition:all 0.3s;}
+.dot.active{background:var(--gold);width:24px;border-radius:3px;}
+.slider-btns{display:flex;gap:10px;}
+.slider-btn{width:42px;height:42px;border:1.5px solid var(--gold-border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gold);transition:all 0.2s;}
+.slider-btn:hover{background:var(--gold);color:var(--bg);}
+.slider-progress{height:2px;background:rgba(212,184,150,0.1);}
+.slider-bar{height:100%;background:var(--gold);width:0%;transition:width 0.1s linear;}
+
+/* PROGRAM */
+.program{background:var(--bg2);padding:80px 0;}
+.program-intro{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center;margin-bottom:56px;}
+.prog-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:rgba(255,255,255,0.05);margin-top:28px;}
+.prog-stat{background:rgba(255,255,255,0.03);padding:22px;text-align:center;}
+.prog-stat-num{font-size:clamp(20px,3vw,28px);font-weight:700;color:var(--gold);line-height:1;white-space:nowrap;}
+.prog-stat-label{font-size:11px;color:var(--w4);letter-spacing:0.08em;margin-top:6px;font-weight:600;}
+.prog-img img{width:100%;display:block;}
+.phase-list{display:flex;flex-direction:column;gap:2px;}
+.phase{background:rgba(255,255,255,0.03);padding:36px;border-left:3px solid transparent;transition:border-color 0.2s;}
+.phase:hover{border-left-color:var(--gold);}
+.phase-label{font-size:11px;letter-spacing:0.22em;color:var(--gold);font-weight:700;margin-bottom:10px;}
+.phase h3{font-size:clamp(17px,2.2vw,22px);font-weight:700;color:var(--white);margin-bottom:6px;}
+.phase-week{font-size:13px;color:var(--w4);display:block;margin-bottom:14px;font-style:italic;}
+.phase p{font-size:14px;color:var(--w4);line-height:1.8;}
+.phase ul{list-style:none;margin-top:12px;}
+.phase ul li{padding:5px 0 5px 16px;font-size:14px;color:var(--w4);position:relative;line-height:1.7;}
+.phase ul li::before{content:'·';position:absolute;left:0;color:var(--gold);font-size:18px;line-height:1.3;}
+.phase-win{margin-top:18px;padding:16px 18px;background:rgba(212,184,150,0.06);border-left:3px solid var(--gold);}
+.phase-win strong{font-size:11px;letter-spacing:0.12em;color:var(--gold);font-weight:700;display:block;margin-bottom:5px;}
+.phase-win p{font-size:14px;color:var(--w6);margin:0;font-style:italic;}
+
+/* INCLUDES + GIFTS + VALUE */
+.dark-sec{background:var(--bg);padding:80px 0;}
+.dark-sec h2{font-size:clamp(22px,3.5vw,34px);font-weight:700;color:var(--white);margin-bottom:8px;}
+.includes-list{list-style:none;margin:24px 0;}
+.inc-li{display:grid;grid-template-columns:38px 1fr;gap:16px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.06);}
+.inc-li:last-child{border-bottom:none;}
+.inc-icon{width:38px;height:38px;background:rgba(212,184,150,0.08);border:1px solid var(--gold-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.inc-li strong{color:var(--white);display:block;margin-bottom:3px;font-size:15px;font-weight:600;}
+.inc-li p{margin:0;font-size:13px;color:var(--w4);}
+.gift-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:rgba(255,255,255,0.05);margin:28px 0;}
+.gift{background:var(--bg2);padding:24px 22px;}
+.gift-tag{display:inline-block;background:rgba(212,184,150,0.1);color:var(--gold);border:1px solid var(--gold-border);padding:4px 12px;font-size:10px;letter-spacing:0.12em;margin-bottom:14px;font-weight:700;}
+.gift-img{overflow:hidden;margin-bottom:14px;}
+.gift-img img{width:100%;height:auto;display:block;object-fit:contain;}
+.gift h4{font-size:17px;color:var(--white);margin-bottom:5px;font-weight:700;}
+.gift-val{color:var(--gold);font-size:13px;font-style:italic;margin-bottom:8px;}
+.gift p{font-size:13px;color:var(--w4);margin:0;line-height:1.7;}
+.value-table{background:rgba(255,255,255,0.03);border:1px solid var(--gold-border);padding:32px 40px;margin-top:48px;}
+.val-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:15px;color:var(--w6);}
+.val-row:last-child{border-bottom:none;}
+.val-total{background:var(--gold-dim);margin:16px -40px -32px;padding:20px 40px;border-top:1px solid var(--gold-border);display:flex;justify-content:space-between;align-items:center;}
+.val-total span{font-size:13px;color:var(--w4);font-weight:700;letter-spacing:0.08em;}
+.val-total-price{font-size:30px;font-weight:700;color:var(--gold);}
+
+/* SAVINGS */
+.savings{background:var(--gold);padding:48px 24px;text-align:center;}
+.savings-label{font-size:13px;letter-spacing:0.18em;color:rgba(6,13,26,0.55);font-weight:700;margin-bottom:8px;}
+.savings-price{font-size:clamp(52px,10vw,88px);font-weight:700;color:var(--bg);line-height:1;margin:8px 0;}
+.savings-price s{font-size:clamp(20px,3vw,28px);color:rgba(6,13,26,0.28);margin-right:16px;vertical-align:middle;text-decoration:line-through;}
+.savings-badge{display:inline-block;background:var(--bg);color:var(--gold);font-size:12px;letter-spacing:0.1em;padding:7px 18px;margin-top:12px;font-weight:700;}
+.savings-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:24px;}
+.savings-btns .btn{font-size:15px;padding:16px 36px;}
+.btn-dark{background:var(--bg);color:var(--gold);border:2px solid var(--bg);}
+.btn-dark:hover{background:var(--bg2);}
+.btn-dark-outline{background:transparent;border:2px solid var(--bg);color:var(--bg);}
+.btn-dark-outline:hover{background:var(--bg);color:var(--gold);}
+
+/* GUARANTEE */
+.guarantee-sec{background:var(--bg2);padding:80px 0;}
+.guarantee{display:grid;grid-template-columns:160px 1fr;gap:40px;align-items:start;background:rgba(255,255,255,0.02);border:1px solid var(--gold-border);padding:48px;}
+.g-seal{width:160px;height:160px;border:2px solid var(--gold-border);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;flex-shrink:0;}
+.g-seal-num{font-size:44px;font-weight:700;color:var(--gold);line-height:1;}
+.g-seal-label{font-size:10px;letter-spacing:0.12em;color:var(--w4);margin-top:5px;font-weight:600;}
+.guarantee h3{font-size:clamp(20px,2.8vw,28px);font-weight:700;color:var(--white);margin-bottom:12px;}
+.guarantee .g-highlight{font-size:clamp(17px,2.2vw,22px);font-weight:700;color:var(--white);font-style:italic;margin:12px 0 18px;line-height:1.4;}
+.guarantee .g-highlight em{color:var(--gold);}
+.guarantee p{font-size:15px;color:var(--w6);line-height:1.85;margin-bottom:10px;}
+.guarantee p strong{color:var(--white);}
+
+/* FAQ */
+.faq{background:var(--bg);padding:80px 0;}
+.faq-item{margin-bottom:10px;border-left:3px solid var(--gold);background:var(--bg2);overflow:hidden;}
+.faq-q{padding:20px 24px;font-size:16px;font-weight:700;color:var(--white);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.faq-q:hover{color:var(--gold);}
+.faq-icon{font-size:20px;color:var(--gold);flex-shrink:0;transition:transform 0.25s;font-weight:400;}
+.faq-a{padding:0 24px;max-height:0;overflow:hidden;transition:max-height 0.35s ease,padding 0.25s;}
+.faq-a p{font-size:15px;color:var(--w6);line-height:1.9;padding-bottom:20px;}
+.faq-item.open .faq-a{max-height:400px;}
+.faq-item.open .faq-icon{transform:rotate(45deg);}
+
+/* FORM */
+.form-sec{background:var(--bg2);padding:80px 0;}
+.form-wrap{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:start;}
+.form-left h2{font-size:clamp(24px,3.5vw,34px);font-weight:700;color:var(--white);margin-bottom:12px;}
+.form-left p{font-size:15px;color:var(--w6);line-height:1.8;}
+.price-row{display:flex;align-items:baseline;gap:14px;margin:20px 0 10px;flex-wrap:wrap;}
+.price-old{font-size:18px;color:var(--w2);text-decoration:line-through;}
+.price-new{font-size:clamp(40px,6vw,56px);font-weight:700;color:var(--gold);line-height:1;}
+.form-notes{margin-top:16px;font-size:14px;color:var(--w4);line-height:2.4;}
+.form-notes strong{color:var(--gold);}
+.reg-form{background:rgba(255,255,255,0.03);border:1px solid var(--gold-border);padding:32px 30px;}
+.form-group{margin-bottom:18px;}
+.form-group label{display:block;font-size:11px;letter-spacing:0.14em;color:var(--gold);margin-bottom:7px;font-weight:700;}
+.form-group input,.form-group select{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--gold-border);padding:13px 15px;color:var(--white);font-family:var(--font);font-size:15px;font-weight:400;outline:none;transition:border-color 0.2s;-webkit-appearance:none;border-radius:0;}
+.form-group input::placeholder{color:rgba(250,250,250,0.2);}
+.form-group input:focus,.form-group select:focus{border-color:var(--gold);}
+.form-group select option{background:var(--bg2);}
+.form-submit{width:100%;background:var(--gold);color:var(--bg);padding:17px;font-family:var(--font);font-size:15px;font-weight:700;letter-spacing:0.12em;border:none;cursor:pointer;margin-top:8px;transition:opacity 0.2s;}
+.form-submit:hover{opacity:0.9;}
+.zalo-note{margin-top:16px;padding:14px 18px;background:var(--gold-dim);border-left:3px solid var(--gold);}
+.zalo-note p{font-size:13px;color:var(--w6);margin:0;}
+.form-success{display:none;text-align:center;padding:36px 16px;}
+.form-success h3{font-size:24px;font-weight:700;color:var(--gold);margin-bottom:12px;}
+.form-success p{color:var(--w6);font-size:15px;}
+
+/* CLOSING */
+.closing{background:var(--bg);padding:80px 0;text-align:center;}
+.closing-quote{font-size:clamp(20px,3vw,28px);font-weight:600;font-style:italic;color:var(--w6);max-width:640px;margin:0 auto 32px;line-height:1.5;}
+
+footer{padding:32px 0;text-align:center;background:var(--bg2);color:var(--w4);font-size:13px;border-top:1px solid rgba(255,255,255,0.05);}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  section{padding:56px 0;}
+  .container{padding:0 20px;}
+  .hero{grid-template-columns:1fr;min-height:auto;}
+  .hero-right{order:-1;height:auto;min-height:0;}
+  .hero-right img{min-height:0;height:auto;content:url('https://res.cloudinary.com/dttzmbg8e/image/upload/v1780275597/Hero_mobile_yvaywy.png');object-fit:contain;}
+  .hero-left{padding:40px 24px 48px;}
+  .hero-btns{flex-direction:column;}
+  .hero-btns .btn{width:100%;justify-content:center;}
+  .truth-item,.truth-item.rev{grid-template-columns:1fr;direction:ltr;gap:24px;}
+  .program-intro{grid-template-columns:1fr;gap:28px;}
+  .prog-stats{grid-template-columns:repeat(3,1fr);}
+  .gift-grid{grid-template-columns:1fr;}
+  .guarantee{grid-template-columns:1fr;text-align:center;padding:28px 22px;}
+  .g-seal{margin:0 auto;}
+  .form-wrap{grid-template-columns:1fr;gap:32px;}
+  .reg-form{padding:24px 20px;}
+  .value-table{padding:24px 20px;}
+  .val-total{margin:14px -20px -24px;padding:16px 20px;}
+  .cta-banner{flex-direction:column;}
+  .savings-btns{flex-direction:column;align-items:center;}
+  .savings-btns .btn{width:100%;max-width:360px;}
+  #program-cta{justify-content:center !important;}
+  .testi-card{padding-left:0;padding-right:0;}
+  .testi-inner{max-width:100%;padding:0 20px;}
+}
+@media(max-width:480px){
+  .prog-stats{grid-template-columns:1fr;}
+  .hero-stats{gap:16px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero" style="padding:0;">
+  <div class="hero-bg"></div>
+  <div class="hero-left">
+    <div class="hero-brand">Hành Trình Chuyển Mình</div>
+    <div class="hero-brand-sub">Shift Within</div>
+    <h1 class="hero-h1">Trở thành phiên bản <span class="hl-gold">sở hữu vóc dáng</span> mà bạn <span class="hl-gold">thực sự mong muốn</span> chỉ trong <span class="hl-blue">8 tuần.</span></h1>
+    <p class="hero-sub">Ngay cả khi bạn từng nghĩ mình không thể <span class="hl">kỷ luật</span> trong ăn uống và tập luyện.</p>
+    <div class="hero-btns">
+      <a href="#dang-ky" class="btn btn-gold">Đăng Ký Ngay</a>
+      <a href="#chuong-trinh" class="btn btn-outline">Xem Chi Tiết</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="hero-stat-num">8</div><div class="hero-stat-label">Tuần Hành Trình</div></div>
+      <div><div class="hero-stat-num">30</div><div class="hero-stat-label">Suất Giới Hạn</div></div>
+      <div><div class="hero-stat-num">Bắt Đầu</div><div class="hero-stat-label">Ngay Hôm Nay</div></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <img src="https://res.cloudinary.com/dttzmbg8e/image/upload/v1780270489/Heroimage_qvntjc.png" alt="Quinn Nguyễn — Shift Within">
+  </div>
+</section>
+
+<div class="gold-line"></div>
+
+<!-- CTA BANNER 1 -->
+<div class="cta-banner">
+  <p>Chỉ còn <strong>30 suất giới hạn/tháng</strong> · Cam kết hoàn <strong>100% tiền</strong> nếu không hiệu quả</p>
+  <a href="#dang-ky" class="btn btn-gold">Đăng Ký Giữ Suất →</a>
+</div>
+
+<!-- HOOK -->
+<section class="hook">
+  <div class="blue-line"></div>
+  <div class="container" style="padding-top:80px;">
+    <div class="eyebrow">Đọc Trước Khi Tiếp Tục</div>
+    <h2>Bạn Đã Thử Rồi. <span>Nhiều Lần.</span></h2>
+    <p class="lead">Có thể bạn không còn nhớ chính xác mình đã thử bao nhiêu lần. Vì sau quá nhiều lần bắt đầu rồi dừng lại, bạn rốt cuộc đã quen với việc thất bại và bỏ cuộc. Thế nhưng trong thâm tâm, bạn vẫn mong chờ một ngày mình sẽ thực sự thay đổi.</p>
+    <p class="body-p">Mỗi lần bắt đầu, bạn đều nghĩ "lần này sẽ khác". Bạn mua gói tập mới. Tải lại app đếm calo. Theo dõi thêm một chục fitness influencer mới. Thử một chế độ ăn kiêng mới.</p>
+    <p class="body-p">Tuần đầu tiên, mọi thứ bắt đầu rất ổn. Tuần thứ hai, bạn bắt đầu thấy mệt. Tuần thứ ba, bạn bỏ lỡ 1–2 buổi tập. Tuần thứ tư: <span class="gold-q">"Hay cứ như hiện tại cũng được rồi…"</span></p>
+    <div class="highlight">
+      <p><strong>Bạn không thất bại vì bạn yếu đuối.</strong> Bạn thất bại vì bạn đang cố thay đổi cơ thể bằng cùng một cách tiếp cận đã khiến bạn bỏ cuộc hết lần này đến lần khác.</p>
+    </div>
+    <p class="body-p">Tất cả những thứ bạn đã thử đều có chung một lỗ hổng. Chúng được xây dựng cho phiên bản đầy động lực của bạn, như thể những ngày mệt mỏi, chán nản hay muốn bỏ cuộc sẽ không bao giờ xảy ra.</p>
+    <p class="lead"><strong style="color:var(--white);">Hành trình 8 tuần Chuyển Mình được thiết kế khác.</strong> Nó không bắt bạn phải kỷ luật hơn. Nó dạy bạn cách <span style="color:var(--gold);font-weight:600;">xây dựng cơ thể mình yêu</span> mà không cần dựa vào ý chí.</p>
+  </div>
+</section>
+
+<!-- STORY -->
+<section style="background:var(--bg2);padding:80px 0;">
+  <div class="container">
+    <div class="eyebrow">Câu Chuyện Của Quinn</div>
+    <h2 class="sec-title">Mình Đã Từng Ở Chính Xác Nơi Bạn Đang Đứng.</h2>
+    <div class="story-col">
+      <div class="story-block-text">
+        <p>Lớp 3, mình bắt đầu bị trêu là "bà béo." Cái biệt danh đó đã ám ảnh mình suốt những năm tháng trưởng thành.</p>
+        <p>Mình đã thử mọi cách: thuốc giảm cân, nhảy dây, aerobics, chạy bộ, nhịn ăn gián đoạn, những chế độ ăn cực đoan trên mạng. Mỗi lần đều bắt đầu với rất nhiều quyết tâm. Nhưng rồi chỉ vài ngày, có khi vài tuần sau, lại bỏ cuộc.</p>
+      </div>
+      <div class="story-block-img">
+        <img src="https://res.cloudinary.com/dttzmbg8e/image/upload/v1780272750/Thi%E1%BA%BFt_k%E1%BA%BF_ch%C6%B0a_c%C3%B3_t%C3%AAn_2_s7lmos.png" alt="Quinn ngày nhỏ">
+      </div>
+      <div class="story-block-text">
+        <p>22 tuổi, mình dùng tháng lương đầu tiên để thuê HLV tập gym. Sau 8 tháng, mình giảm được 14kg. Nhưng dù vậy, khi nhìn vào gương, mình vẫn không tìm thấy cô gái mình muốn trở thành.</p>
+        <p>Suốt gần 4 năm loay hoay sau đó, có những lúc mình đứng trước gương và tự hỏi: <em>"Không lẽ mình chỉ có thể được đến thế này thôi sao?"</em> Mình từng chán nản, từng từ bỏ, cũng từng bắt đầu lại. Vô số lần.</p>
+      </div>
+      <div class="story-block-img">
+        <img src="https://res.cloudinary.com/dttzmbg8e/image/upload/v1780272750/2_xwl588.png" alt="Quinn 22 tuổi">
+      </div>
+      <div class="story-block-text">
+        <p>Đến một ngày, mình quyết định vòng lặp đó không thể tiếp tục. Lần đầu tiên mình nhận ra vấn đề không phải là thiếu ý chí. Mình đã luôn nhìn fitness như một hình phạt cần chịu đựng, thay vì một lối sống cần xây dựng.</p>
+        <p>Sau 1 khoá đào tạo HLV và 1 khoá chuyên sâu về dinh dưỡng, lần đầu tiên sau nhiều năm, mình cho phép bản thân ăn nhiều hơn 1200kcal và mình thay đổi cách tư duy về tập luyện và kỷ luật.</p>
+      </div>
+      <div class="story-block-img">
+        <img src="https://res.cloudinary.com/dttzmbg8e/image/upload/v1780272750/1_muxeyt.png" alt="Quinn bước ngoặt">
+      </div>
+      <div class="story-block-text">
+        <p>Không còn những ngày khổ sở vật lộn với cơn thèm ăn. Không còn những buổi tập nặng nề chán nản. Không còn cảm giác tội lỗi khi lỡ 1 bữa ăn cheat.</p>
+        <p>Và rồi một buổi sáng bình thường, mình nhìn vào gương và chợt thấy cô gái mà mình đã mong chờ suốt nhiều năm. Không chỉ vóc dáng, mà còn là sự tự tin làm chủ cơ thể và cảm giác yêu cuộc đời mình hơn bao giờ hết.</p>
+        <p><strong>Người thất bại không phải vì thiếu cố gắng. Mà vì chưa ai dạy họ thay đổi từ bên trong trước khi yêu cầu họ thay đổi bên ngoài.</strong></p>
+        <p>Mình đã mất hơn 5 năm để hiểu ra điều đó. Và mình tạo ra Hành Trình Chuyển Mình để bạn không cần phải mất 5 năm như mình.</p>
+      </div>
+      <div class="story-block-img">
+        <img src="https://res.cloudinary.com/dttzmbg8e/image/upload/v1779848842/Me_now_gaubzs.png" alt="Quinn hiện tại">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 TRUTHS -->
+<section style="background:var(--bg);padding:80px 0;">
+  <div class="container">
+    <div class="eyebrow">Ba Sự Thật Ít Ai Nói</div>
+    <h2 class="sec-title">Điều Gì Thật Sự Ngăn Bạn Chạm Tay Tới Vóc Dáng Mơ Ước?</h2>
+    <p class="sec-sub">Không phải chế độ ăn. Không phải chương trình tập. Và cũng không phải là câu chuyện kỷ luật.</p>
+    <div class="truth-list">
+      <div class="truth-item">
+        <div>
+          <div class="truth-num">01</div>
+          <h3>Ý Chí Sẽ Cạn Dần. Đó Là Lý Do Bạn Bỏ Cuộc Ở Tuần 3.</h3>
+          <p>Ý chí giống như pin điện thoại: có giới hạn và sẽ vơi đi theo thời gian. Mỗi quyết định khó trong ngày dài với hàng trăm việc lớn nhỏ, "pin" của bạn gần như đã về 0.</p>
+          <p>Đó là lý do bạn ăn rất tốt cả ngày… rồi tối đến lại mất kiểm soát. Đó là lý do bạn quyết tâm dậy sớm tập luyện… nhưng sáng hôm sau tắt báo thức không chút do dự.</p>
+          <p><strong>Người thật sự duy trì được cơ thể đẹp không có ý chí mạnh hơn bạn. Họ có hệ thống thông minh hơn.</strong></p>
+        </div>
+        <div class="truth-img">
+          <img src="https://res.cloudinary.com/dttzmbg8e/image/upload/v1779847733/%C3%9D_ch%C3%AD_c%E1%BA%A1n_pin_simxzl.png" alt="Ý chí cạn dần">
+        </div>
+      </div>
+      <div style="height:1px;background:rgba(255,255,255,0.06);"></div>
+      <div class="truth-item rev">
+        <div>
+          <div class="truth-num">02</div>
+          <h3>Hành Trình Thay Đổi Không Bắt Đầu Ở Phòng Tập. Nó Bắt Đầu Từ Mối Quan Hệ Với Chính Mình.</h3>
+          <p>Hãy nhớ lại lần gần nhất bạn nhìn vào gương và không hài lòng. Trong khoảnh khắc đó: là sự chán ghét và thất vọng? Hay là mong muốn thật sự được thay đổi?</p>
+          <p>Cả hai cảm xúc đều có thể khiến bạn bắt đầu tập luyện. Nhưng chỉ một trong hai đủ mạnh để giúp bạn đi đường dài.</p>
+          <p><strong>Khi bạn bắt đầu yêu thương cơ thể, việc tập luyện trở thành cách thể hiện tình yêu với chính mình.</strong></p>
+        </div>
+        <div class="truth-img">
+          <img src="https://res.cloudinary.com/dttzmbg8e/image/upload/v1779273555/Su%CC%9B%CC%A3_tha%CC%A3%CC%82t_2_ta45ow.png" alt="Sự thật 2">
+        </div>
+      </div>
+      <div style="height:1px;background:rgba(255,255,255,0.06);"></div>
+      <div class="truth-item">
+        <div>
+          <div class="truth-num">03</div>
+          <h3>Bạn Không Cần Thay Đổi Toàn Bộ Cuộc Sống. Chỉ Cần Tốt Hơn 0,01% Mỗi Ngày.</h3>
+          <p>Hầu hết các chương trình tập luyện yêu cầu bạn thay đổi mọi thứ cùng một lúc. Và đó là lý do bạn rất nhanh kiệt sức rồi bỏ cuộc.</p>
+          <p>Hành trình Chuyển Mình chỉ cần 15–20 phút mỗi ngày. Không cắt cơm nhà. Không ép bản thân sống "healthy" 100%.</p>
+          <p><strong>Đó là phương pháp Hiểu · Yêu · Nuôi Dưỡng.</strong></p>
+        </div>
+        <div class="truth-img">
+          <img src="https://res.cloudinary.com/dttzmbg8e/image/upload/v1779273561/Su%CC%9B%CC%A3_tha%CC%A3%CC%82t_3_kkfyx4.png" alt="Sự thật 3">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROMISE -->
+<section class="promise">
+  <div class="container">
+    <div class="eyebrow" style="justify-content:center;">Cam Kết Của Chuyển Mình</div>
+    <p class="promise-quote">Sau 8 tuần, có thể bạn vẫn chưa có ngay cơ thể mà mình hằng mong muốn. Nhưng bạn sẽ bắt đầu xây dựng được một cơ thể mà bạn thật sự <em>hiểu và yêu</em> — và có một hệ thống giúp mình tiếp tục tiến bộ lâu dài.</p>
+    <div class="btn-center">
+      <a href="#dang-ky" class="btn btn-gold">Tôi Muốn Bắt Đầu Hành Trình Này</a>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testi-section">
+  <div class="container">
+    <div class="eyebrow">Họ Đã Thay Đổi Cùng Chuyển Mình</div>
+    <h2 class="sec-title">Những Người Phụ Nữ Đã Đi Trước Bạn.</h2>
+  </div>
+  <div style="margin-top:0;overflow:hidden;" id="sliderWrapper">
+    <div class="slider-outer" id="sliderOuter">
+      <div class="slider-track" id="sliderTrack">
+        <div class="testi-card"><div class="testi-inner">
+          <div class="testi-img-wrap"><img src="https://res.cloudinary.com/dttzmbg8e/image/upload/v1779850033/11_hngcsm.png" alt="Ngọc Anh"></div>
+          <div class="testi-body">
+            <span class="testi-tag">Từ 64kg → 52kg</span>
+            <p class="testi-quote">Mình từng nghĩ phải hi sinh toàn bộ cuộc sống mới giảm cân được. Quinn bảo không cần: cứ ăn cơm nhà với gia đình, tập 3 buổi mỗi tuần là đủ. Lần đầu tiên mình không cảm thấy tội lỗi khi ăn một món mình thích. 5 tháng sau xuống 12kg. Nhưng thứ mình trân trọng hơn là ăn uống không còn là nỗi ám ảnh nữa.</p>
+            <span class="testi-name">Ngọc Anh, 28 tuổi · Nhân viên văn phòng</span>
+          </div>
+        </div></div>
+        <div class="testi-card"><div class="testi-inner">
+          <div class="testi-img-wrap"><img src="https://res.cloudinary.com/dttzmbg8e/image/upload/v1779850026/12_wibnae.png" alt="Hoài Thương"></div>
+          <div class="testi-body">
+            <span class="testi-tag">Thay đổi tỉ lệ cơ thể</span>
+            <p class="testi-quote">Mình đã tập gym 4 năm, từng có PT, nhưng luôn cảm giác cơ thể mình chưa đạt được tiềm năng thật sự. Với Quinn, lần đầu tiên mình được hỏi: không phải muốn nặng bao nhiêu, mà muốn cảm thấy thế nào. Câu hỏi đó thay đổi mọi thứ.</p>
+            <span class="testi-name">Hoài Thương, 22 tuổi · Freelancer</span>
+          </div>
+        </div></div>
+        <div class="testi-card"><div class="testi-inner">
+          <div class="testi-img-wrap"><img src="https://res.cloudinary.com/dttzmbg8e/image/upload/v1779851387/14.png" alt="Minh Trâm"></div>
+          <div class="testi-body">
+            <span class="testi-tag">Từ 85kg → 64kg · Bệnh lý nội tiết</span>
+            <p class="testi-quote">Mình đến với Quinn khi đã gần như mất niềm tin hoàn toàn vào tập luyện. Điều Quinn làm khác là không bắt mình cố gắng thêm. 8 tháng sau mình giảm thành công 21kg. Bác sĩ gọi đó là kỳ tích. Mình gọi đó là lần đầu tiên mình không còn thấy cơ thể là kẻ thù.</p>
+            <span class="testi-name">Minh Trâm, 28 tuổi · Nhân viên văn phòng</span>
+          </div>
+        </div></div>
+        <div class="testi-card"><div class="testi-inner">
+          <div class="testi-img-wrap"><img src="https://res.cloudinary.com/dttzmbg8e/image/upload/v1779850122/13_xdukxd.png" alt="Thu Linh"></div>
+          <div class="testi-body">
+            <span class="testi-tag">Lấy lại vóc dáng sau sinh</span>
+            <p class="testi-quote">Mình đến gặp Quinn với một yêu cầu duy nhất: giảm cân nhanh nhất có thể. Quinn không chiều theo mình. Thay vào đó Quinn hỏi mình có đang ổn không. Lần đầu tiên mình dừng lại và thật sự lắng nghe cơ thể mình. 4 tháng sau giảm 5kg nhưng form dáng thay đổi hoàn toàn.</p>
+            <span class="testi-name">Thu Linh, 24 tuổi · Mẹ bỉm sữa</span>
+          </div>
+        </div></div>
+      </div>
+    </div>
+    <div class="slider-controls">
+      <div class="slider-btns">
+        <button class="slider-btn" id="btnPrev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <button class="slider-btn" id="btnNext"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      </div>
+      <div class="slider-dots" id="sliderDots"></div>
+    </div>
+    <div class="slider-progress"><div class="slider-bar" id="sliderBar"></div></div>
+  </div>
+</section>
+
+<!-- CTA BANNER 2 -->
+<div class="cta-banner">
+  <p>Chỉ còn <strong>30 suất giới hạn/tháng</strong> · Hành Trình Chuyển Mình</p>
+  <a href="#dang-ky" class="btn btn-gold">Giữ Suất Của Tôi →</a>
+</div>
+
+<!-- PROGRAM -->
+<section class="program" id="chuong-trinh">
+  <div class="container">
+    <div class="program-intro">
+      <div>
+        <div class="eyebrow">Giới Thiệu Hành Trình</div>
+        <h2 class="sec-title">8 Tuần <span style="color:var(--gold);">Chuyển Mình</span></h2>
+        <p class="body-p" style="margin-top:10px;">Hành trình theo phương pháp Hiểu · Yêu · Nuôi Dưỡng. Với 15–20 phút mỗi ngày, bạn có thể bắt đầu mà không cần tới gym, không cần cắt cơm nhà.</p>
+        <p class="body-p">Mỗi tuần bạn được mở khoá một phần mới gồm: video dẫn đường + workbook PDF + check-in form. Học online, xem lại bất cứ lúc nào.</p>
+        <div class="prog-stats">
+          <div class="prog-stat"><div class="prog-stat-num">8</div><div class="prog-stat-label">Tuần</div></div>
+          <div class="prog-stat"><div class="prog-stat-num" style="white-space:nowrap;">15–20'</div><div class="prog-stat-label">Mỗi Ngày</div></div>
+          <div class="prog-stat"><div class="prog-stat-num">∞</div><div class="prog-stat-label">Truy Cập</div></div>
+        </div>
+        <div class="btn-center" style="justify-content:flex-start;margin-top:24px;" id="program-cta">
+          <a href="#dang-ky" class="btn btn-gold">Đăng Ký Ngay</a>
+        </div>
+      </div>
+      <div class="prog-img">
+        <img src="https://res.cloudinary.com/dttzmbg8e/image/upload/v1779845728/mockup_tyaozl.png" alt="Mockup Chuyển Mình">
+      </div>
+    </div>
+    <div class="phase-list">
+      <div class="phase">
+        <div class="phase-label">Giai Đoạn 1 · Hiểu</div>
+        <h3>Hiểu Bản Thân Trước Khi Thay Đổi Bất Cứ Điều Gì</h3>
+        <span class="phase-week">Tuần 1 – 3</span>
+        <p>Hầu hết mọi người thất bại vì bắt đầu thay đổi trước khi thật sự hiểu mình. Giai đoạn này bạn sẽ làm ngược lại.</p>
+        <ul>
+          <li>Làm bài test nhận diện vòng lặp cá nhân và tìm ra đúng lý do khiến bạn cứ bắt đầu rồi lại dừng</li>
+          <li>Tìm hiểu cơ địa bản thân: PCOS, tuyến giáp, nội tiết tố và các yếu tố sinh lý ảnh hưởng đến vóc dáng</li>
+          <li>Học dinh dưỡng nền tảng: 3 nhóm chất, TDEE cá nhân, setup app tracking không bị ám ảnh</li>
+          <li>Vẽ chân dung "cô gái mình muốn trở thành": cô ấy sống như thế nào, ăn gì, cảm thấy thế nào mỗi ngày</li>
+        </ul>
+        <div class="phase-win"><strong>Chiến Thắng</strong><p>Lần đầu tiên bạn nhìn thấy rõ mình là ai, cơ thể mình cần gì, và phiên bản mình muốn trở thành trông như thế nào.</p></div>
+      </div>
+      <div class="phase">
+        <div class="phase-label">Giai Đoạn 2 · Yêu</div>
+        <h3>Thử Sống Như Phiên Bản Cô Gái Đó Và Thấy Mình Thích</h3>
+        <span class="phase-week">Tuần 4 – 6</span>
+        <p>Không phải ép mình theo kế hoạch. Mà là thử sống như cô gái đó xem cảm giác thế nào.</p>
+        <ul>
+          <li>Bắt đầu lịch tập kháng lực 3 buổi/tuần với video hướng dẫn của Quinn, tại nhà hoặc gym đều được</li>
+          <li>Thực hành ăn đủ chất theo TDEE cá nhân, lần đầu tiên ăn đủ thay vì ăn ít</li>
+          <li>Học cách ăn linh hoạt: cơm nhà, ăn ngoài, cheat meal có kiểm soát mà không cảm thấy tội lỗi</li>
+          <li>Identity checkpoint mỗi tuần: cô gái đó sẽ xử lý tình huống này như thế nào?</li>
+        </ul>
+        <div class="phase-win"><strong>Chiến Thắng</strong><p>Bạn nhận ra mình đang tập đều, ăn đúng mà không phải gồng. Và thấy mình thích cảm giác này.</p></div>
+      </div>
+      <div class="phase">
+        <div class="phase-label">Giai Đoạn 3 · Nuôi Dưỡng</div>
+        <h3>Đây Không Còn Là Kế Hoạch. Đây Là Mình Rồi.</h3>
+        <span class="phase-week">Tuần 7 – 8</span>
+        <p>Giai đoạn này không có gì mới để học. Chỉ có một việc: biến tất cả những gì bạn đã làm thành bản sắc của mình.</p>
+        <ul>
+          <li>Review toàn bộ hành trình cùng Quinn và nhìn vào pattern thật của bản thân</li>
+          <li>Thiết kế "tuần chuẩn" cá nhân: tập ngày nào, ăn gì vào ngày bận, làm gì khi đi du lịch hay có tiệc</li>
+          <li>Xây bộ công cụ recover riêng và viết tuyên ngôn bản thân mới</li>
+          <li>Nhận kế hoạch 90 ngày tiếp theo được cá nhân hoá từ Quinn</li>
+        </ul>
+        <div class="phase-win"><strong>Chiến Thắng</strong><p>Bạn nhìn lại "cô gái đó" từ tuần 1 và nhận ra: đó chính là mình bây giờ.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER 3 -->
+<div class="cta-banner">
+  <p>Chỉ còn <strong>30 suất giới hạn/tháng</strong> · Cam kết hoàn <strong>100% tiền</strong></p>
+  <a href="#dang-ky" class="btn btn-gold">Đăng Ký Ngay →</a>
+</div>
+
+<!-- INCLUDES + GIFTS + VALUE -->
+<section class="dark-sec">
+  <div class="container">
+    <div class="eyebrow">Bạn Nhận Được Gì</div>
+    <h2>Toàn Bộ Những Gì Có Trong Hành Trình Chuyển Mình.</h2>
+    <ul class="includes-list">
+      <li class="inc-li"><div class="inc-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4B896" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div><div><strong>Video dẫn đường + 8 workbook PDF</strong><p>Unlock từng tuần, giúp bạn nhận diện vòng lặp và xây thói quen mới đúng tiến độ.</p></div></li>
+      <li class="inc-li"><div class="inc-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4B896" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div><strong>Check-in form hàng tuần với Quinn (4 tuần đầu)</strong><p>Theo dõi từng người, đảm bảo bạn không lạc hướng từ đầu.</p></div></li>
+      <li class="inc-li"><div class="inc-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4B896" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><div><strong>Sổ Tay 8 Tuần PDF</strong><p>Checklist hàng ngày, câu hỏi phản tư, nhật ký ghi lại hành trình.</p></div></li>
+      <li class="inc-li"><div class="inc-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4B896" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div><strong>Cộng đồng Telegram kín · truy cập lâu dài</strong><p>Bạn không học một mình. Cộng đồng phụ nữ cùng đi trên hành trình.</p></div></li>
+      <li class="inc-li"><div class="inc-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4B896" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10l4.553-2.069A1 1 0 0 1 21 8.845v6.31a1 1 0 0 1-1.447.894L15 14M3 8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8z"/></svg></div><div><strong>Chương trình tập cá nhân hoá từ tuần 4 — tại gym hoặc tại nhà</strong><p>Quinn xem video bạn tập và feedback chỉnh form trực tiếp cho từng người.</p></div></li>
+      <li class="inc-li"><div class="inc-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4B896" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div><div><strong>Truy cập lâu dài + cập nhật miễn phí</strong><p>Quay lại xem bao nhiêu lần cũng được. Nội dung mới nhận miễn phí.</p></div></li>
+    </ul>
+
+    <div style="margin-top:64px;">
+      <div class="eyebrow">Quà Tặng Đặc Biệt Khi Đăng Ký</div>
+      <h2>Bốn Công Cụ Trị Giá 2.200.000đ — Tặng Kèm Miễn Phí.</h2>
+      <div class="gift-grid">
+        <div class="gift"><span class="gift-tag">Quà Tặng 1</span><div class="gift-img"><img src="https://res.cloudinary.com/dttzmbg8e/image/upload/v1779273566/To%CC%82i_la%CC%80_ai-_Qua%CC%80_1_yrd8vd.png" alt="Tôi Là Ai"></div><h4>Tôi Là Ai</h4><p class="gift-val">Workbook vòng lặp · 300.000đ</p><p>Nhận diện chính xác vòng lặp hành vi của riêng bạn.</p></div>
+        <div class="gift"><span class="gift-tag">Quà Tặng 2</span><div class="gift-img"><img src="https://res.cloudinary.com/dttzmbg8e/image/upload/v1779273577/Qu%CC%80a_2_uhwaeo.png" alt="Cơm Nhà Vẫn Vào Form"></div><h4>Cơm Nhà Vẫn Vào Form</h4><p class="gift-val">Thực đơn 7 ngày · 200.000đ</p><p>Món Việt quen thuộc, không cắt tinh bột, không nấu riêng.</p></div>
+        <div class="gift"><span class="gift-tag">Quà Tặng 3</span><div class="gift-img"><img src="https://res.cloudinary.com/dttzmbg8e/image/upload/v1779273562/Qua%CC%80_3_hakf1r.png" alt="Thì Thầm Với Bản Thân"></div><h4>Thì Thầm Với Bản Thân</h4><p class="gift-val">10 câu hỏi coaching · 200.000đ</p><p>Tự vượt qua ngày muốn bỏ cuộc mà không cần ai nhắc nhở.</p></div>
+        <div class="gift"><span class="gift-tag">Quà Tặng 4</span><div class="gift-img"><img src="https://res.cloudinary.com/dttzmbg8e/image/upload/v1779851396/Kho%20video.png" alt="Kho Video Bài Tập"></div><h4>Kho Video Hướng Dẫn Bài Tập</h4><p class="gift-val">Gần 100 bài tập · Update trọn đời · 1.500.000đ</p><p>Bài tập theo thẩm mỹ phụ nữ, tại nhà hoặc gym, cập nhật liên tục miễn phí.</p></div>
+      </div>
+    </div>
+
+    <div class="value-table">
+      <div class="eyebrow" style="margin-bottom:20px;">Tổng Giá Trị Bạn Nhận</div>
+      <div class="val-row"><span>Video dẫn đường + 8 workbook PDF</span><span>1.500.000đ</span></div>
+      <div class="val-row"><span>Chương trình tập cá nhân hoá + feedback form qua video</span><span>1.000.000đ</span></div>
+      <div class="val-row"><span>Sổ Tay 8 Tuần PDF</span><span>200.000đ</span></div>
+      <div class="val-row"><span>Cộng đồng Telegram kín lâu dài</span><span>300.000đ</span></div>
+      <div class="val-row"><span>4 quà tặng đặc biệt</span><span>2.200.000đ</span></div>
+      <div class="val-total"><span>Tổng Giá Trị</span><span class="val-total-price">5.200.000đ</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SAVINGS -->
+<div class="savings">
+  <div class="savings-label">Giá Hành Trình Hôm Nay</div>
+  <div class="savings-price"><s>5.200.000đ</s>699.000đ</div>
+  <div class="savings-badge">Tiết Kiệm 87% — Chỉ Áp Dụng Cho Batch Đầu Tiên</div>
+  <div class="savings-btns">
+    <a href="#dang-ky" class="btn btn-dark">Đăng Ký Ngay →</a>
+    <a href="#chuong-trinh" class="btn btn-dark-outline">Xem Chi Tiết Hành Trình</a>
+  </div>
+</div>
+
+<!-- GUARANTEE -->
+<section class="guarantee-sec">
+  <div class="container">
+    <div class="guarantee">
+      <div class="g-seal">
+        <div class="g-seal-num">30</div>
+        <div class="g-seal-label">Ngày Cam Kết<br>Hoàn Tiền</div>
+      </div>
+      <div>
+        <div class="eyebrow gold">Bảo Đảm Của Chuyển Mình</div>
+        <h3>Cam Kết Hoàn 100% Tiền</h3>
+        <p class="g-highlight">Nếu bạn thực hiện đủ và vẫn không thấy khác biệt, <em>mình hoàn lại toàn bộ.</em></p>
+        <p>Nếu sau 4 tuần đầu, bạn hoàn thành workbook và check-in đầy đủ, mà vẫn cảm thấy mình đang ở trong cùng cái vòng lặp cũ, mình hoàn lại 100% tiền. Không hỏi thêm câu nào.</p>
+        <p><strong>Mình đưa ra cam kết này vì mình tự tin vào chất lượng của Hành Trình Chuyển Mình.</strong></p>
+        <p>Điều kiện: hoàn thành workbook 4 tuần đầu · check-in đủ 4 tuần liên tiếp · yêu cầu trong vòng 30 ngày</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="container">
+    <div class="eyebrow">Câu Hỏi Thường Gặp</div>
+    <h2 class="sec-title" style="margin-bottom:28px;">Những Điều Bạn Đang Nghĩ Trong Đầu.</h2>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Mua xong chắc mình cũng bỏ cuộc như mọi lần<span class="faq-icon">+</span></div>
+      <div class="faq-a"><p>Đây chính xác là vấn đề mà Chuyển Mình sẽ giải quyết. Mọi chương trình tập luyện khác đều ép bạn phải "kỷ luật hơn", đó là lý do bạn sớm từ bỏ. Nhưng Chuyển Mình giúp bạn sống trong phiên bản của chính bạn, tiến bộ nhỏ mỗi ngày cho đến khi bạn sẵn sàng trở thành hình mẫu sở hữu vóc dáng mơ ước. Nếu sau 4 tuần không hiệu quả, bạn lấy lại toàn bộ tiền.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Cái này có khác gì những thứ mình đã thử đâu<span class="faq-icon">+</span></div>
+      <div class="faq-a"><p>Mọi thứ bạn đã từng thử đều bắt đầu từ bên ngoài: tracking calo, lịch tập, chế độ ăn. Chuyển Mình bắt đầu từ bên trong: tìm ra và giải quyết lý do thật sự khiến bạn bỏ cuộc. Chuyển Mình cũng sẽ giúp bạn hiểu cái "tại sao" đằng sau mỗi lịch ăn hay tập luyện. Khi hiểu, bạn sẽ có thể chủ động sắp xếp và duy trì. Đây là thứ chưa ai làm cho bạn trước đây.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Mình bận quá không có thời gian<span class="faq-icon">+</span></div>
+      <div class="faq-a"><p>Bắt đầu với chỉ 15–20 phút mỗi ngày, tăng tiến dần khi bạn sẵn sàng. Bạn chưa cần bước chân đến phòng tập nếu bạn còn lưỡng lự. Nếu bạn có thời gian lướt mạng 30 phút mỗi tối, bạn có thời gian cho cái này.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Giá này có xứng không<span class="faq-icon">+</span></div>
+      <div class="faq-a"><p>Bạn đang trả 699.000đ cho 1 hành trình sẽ thay đổi toàn bộ nhận dạng của bạn. Nếu sau 4 tuần không hiệu quả, bạn lấy lại toàn bộ tiền. Rủi ro là của mình, không phải của bạn.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Chuyển Mình có bao gồm lịch tập và chế độ ăn không?<span class="faq-icon">+</span></div>
+      <div class="faq-a"><p>Có, nhưng không phải ngay lập tức. Bạn sẽ được học và hiểu về chính bản thân mình trước khi lại vội vàng lao đầu vào một vòng lặp mới. Chỉ khi bạn đã sẵn sàng, sau 3 tuần, Quinn sẽ lên lịch tập kèm video hướng dẫn chi tiết + chế độ ăn cá nhân hoá cho thể trạng hiện tại của bạn.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FORM -->
+<section class="form-sec" id="dang-ky">
+  <div class="container">
+    <div class="eyebrow gold">Đăng Ký Tham Gia</div>
+    <div class="form-wrap">
+      <div class="form-left">
+        <h2>Bắt Đầu Hành Trình Của Bạn.</h2>
+        <p>Giới hạn 30 suất mỗi tháng vì Quinn check-in cá nhân từng người trong 4 tuần đầu.</p>
+        <div class="price-row">
+          <span class="price-old">5.200.000đ</span>
+          <span class="price-new">699.000đ</span>
+        </div>
+        <div class="form-notes">
+          ✓ Cam kết hoàn <strong>100% tiền</strong> trong 30 ngày<br>
+          ✓ Truy cập lâu dài, cập nhật miễn phí<br>
+          ✓ Cộng đồng Telegram kín<br>
+          ✓ Bắt đầu ngay sau khi đăng ký
+        </div>
+      </div>
+      <div class="reg-form" id="regForm">
+        <div class="form-group"><label>Họ và tên</label><input type="text" placeholder="Nguyễn Thị A" id="f-name"></div>
+        <div class="form-group"><label>Số điện thoại</label><input type="tel" placeholder="09xx xxx xxx" id="f-phone"></div>
+        <div class="form-group"><label>Email</label><input type="email" placeholder="email@gmail.com" id="f-email"></div>
+        <div class="form-group">
+          <label>Bạn đang ở đâu trong hành trình?</label>
+          <select id="f-stage">
+            <option value="">Chọn tình trạng của bạn...</option>
+            <option>Chưa bắt đầu, muốn thay đổi nhưng chưa biết từ đâu</option>
+            <option>Đã thử nhiều lần nhưng cứ bỏ cuộc</option>
+            <option>Đang tập nhưng không thấy kết quả</option>
+            <option>Muốn duy trì kết quả đã có lâu dài hơn</option>
+          </select>
+        </div>
+        <button class="form-submit" onclick="submitForm()">Đăng Ký Giữ Suất Ngay</button>
+        <p style="text-align:center;font-size:12px;color:var(--w4);margin-top:14px;">Thông tin của bạn được bảo mật tuyệt đối</p>
+        <div class="zalo-note" style="margin-top:14px;">
+          <p>Sau khi đăng ký, Quinn sẽ gửi email xác nhận suất và hướng dẫn thanh toán trong vòng 2 giờ.</p>
+        </div>
+        <div class="form-success" id="formSuccess">
+          <h3>🎉 Đăng ký thành công!</h3>
+          <p>Mình đã gửi email xác nhận cho bạn. Kiểm tra hộp thư (kể cả tab Promotions/Spam) để nhận hướng dẫn thanh toán.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="closing">
+  <div class="container">
+    <p class="closing-quote">Trong 8 tuần nữa, bạn sẽ ở đâu?<br>Tiếp tục vòng lặp cũ, hay đã bước vào cơ thể bạn yêu?</p>
+    <div class="btn-center">
+      <a href="#dang-ky" class="btn btn-gold">Tôi Chọn Thay Đổi →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>© 2026 Chuyển Mình · Shift Within · Quinn Nguyễn</p>
+  </div>
+</footer>
+
+<script>
+// ── SLIDER ──────────────────────────────────────────────────────────────────
+(function(){
+  var cur=0, paused=false, progVal=0, progTimer=null;
+  var outer  = document.getElementById('sliderOuter');
+  var track  = document.getElementById('sliderTrack');
+  var dotsEl = document.getElementById('sliderDots');
+  var bar    = document.getElementById('sliderBar');
+  if(!outer||!track) return;
+
+  var cards = Array.prototype.slice.call(track.querySelectorAll('.testi-card'));
+  var total = cards.length;
+
+  // Always read the live width of the viewport container
+  function W(){ return outer.offsetWidth; }
+
+  // Set all card + track widths and jump to current slide (no animation)
+  function layout(){
+    var w = W();
+    track.style.transition = 'none';
+    track.style.width = (w * total) + 'px';
+    cards.forEach(function(c){
+      c.style.width    = w + 'px';
+      c.style.minWidth = w + 'px';
+    });
+    track.style.transform = 'translateX(-' + (cur * w) + 'px)';
+    // restore transition after paint
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        track.style.transition = 'transform 0.55s cubic-bezier(0.4,0,0.2,1)';
+      });
+    });
+  }
+
+  function goTo(n){
+    cur = ((n % total) + total) % total;
+    track.style.transform = 'translateX(-' + (cur * W()) + 'px)';
+    updateDots();
+  }
+
+  // Dots
+  function buildDots(){
+    if(!dotsEl) return;
+    dotsEl.innerHTML='';
+    cards.forEach(function(_,i){
+      var d=document.createElement('button');
+      d.className='dot'+(i===0?' active':'');
+      d.addEventListener('click',function(){ goTo(i); resetAuto(); });
+      dotsEl.appendChild(d);
+    });
+  }
+  function updateDots(){
+    if(!dotsEl) return;
+    dotsEl.querySelectorAll('.dot').forEach(function(d,i){
+      d.classList.toggle('active', i===cur);
+    });
+  }
+
+  // Auto-progress
+  function startProg(){
+    progVal=0; if(bar) bar.style.width='0%';
+    clearInterval(progTimer);
+    progTimer=setInterval(function(){
+      if(paused) return;
+      progVal += 100/50;
+      if(bar) bar.style.width=Math.min(progVal,100)+'%';
+      if(progVal>=100){ goTo(cur+1); resetAuto(); }
+    },100);
+  }
+  function resetAuto(){ clearInterval(progTimer); startProg(); }
+
+  // Buttons
+  var btnP=document.getElementById('btnPrev'), btnN=document.getElementById('btnNext');
+  if(btnP) btnP.addEventListener('click',function(){ goTo(cur-1); resetAuto(); });
+  if(btnN) btnN.addEventListener('click',function(){ goTo(cur+1); resetAuto(); });
+
+  // Pause on hover/touch
+  var wrapper=document.getElementById('sliderWrapper');
+  if(wrapper){
+    wrapper.addEventListener('mouseenter',function(){ paused=true; });
+    wrapper.addEventListener('mouseleave',function(){ paused=false; });
+    wrapper.addEventListener('touchstart',function(){ paused=true; },{passive:true});
+    wrapper.addEventListener('touchend',function(){ setTimeout(function(){ paused=false; },2000); },{passive:true});
+  }
+
+  // Swipe
+  var tx=0;
+  track.addEventListener('touchstart',function(e){ tx=e.touches[0].clientX; },{passive:true});
+  track.addEventListener('touchend',function(e){
+    var d=tx-e.changedTouches[0].clientX;
+    if(Math.abs(d)>40){ goTo(cur+(d>0?1:-1)); resetAuto(); }
+  },{passive:true});
+
+  // Resize: re-layout, re-read width
+  var rt;
+  window.addEventListener('resize',function(){
+    clearTimeout(rt);
+    rt=setTimeout(function(){ layout(); },80);
+  });
+
+  // Init
+  layout();
+  buildDots();
+  startProg();
+})();
+
+// ── FAQ ──────────────────────────────────────────────────────────────────────
+function toggleFaq(el){ el.parentElement.classList.toggle('open'); }
+
+// ── FORM ─────────────────────────────────────────────────────────────────────
+function submitForm(){
+  var n=document.getElementById('f-name').value;
+  var p=document.getElementById('f-phone').value;
+  var e=document.getElementById('f-email').value;
+  if(!n||!p||!e){ alert('Vui lòng điền đầy đủ thông tin nhé!'); return; }
+  var form=document.getElementById('regForm');
+  form.querySelectorAll('.form-group,.form-submit,p,.zalo-note').forEach(function(el){ el.style.display='none'; });
+  document.getElementById('formSuccess').style.display='block';
+}
+</script>
+</body>
+</html>

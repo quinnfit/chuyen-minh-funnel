@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Thanh Toán — Chuyển Mình · Shift Within</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060D1A;--bg2:#0A1628;--bg3:#0D1E3A;
+  --gold:#D4B896;--gold-dim:rgba(212,184,150,0.12);--gold-border:rgba(212,184,150,0.2);
+  --blue:#1B9FE8;--blue-dim:rgba(27,159,232,0.08);--blue-border:rgba(27,159,232,0.18);
+  --white:#FAFAFA;--w8:rgba(250,250,250,0.8);--w6:rgba(250,250,250,0.6);--w4:rgba(250,250,250,0.4);--w2:rgba(250,250,250,0.2);
+  --font:'Be Vietnam Pro',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--font);background:var(--bg);color:var(--white);min-height:100vh;display:flex;flex-direction:column;}
+
+/* HEADER */
+.header{padding:20px 32px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;}
+.header-brand{font-size:13px;letter-spacing:0.2em;color:var(--gold);font-weight:700;}
+.header-brand span{color:var(--w4);font-weight:400;}
+.header-steps{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--w4);}
+.step-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+.step-dot.done{background:rgba(212,184,150,0.15);color:var(--gold);border:1px solid var(--gold-border);}
+.step-dot.active{background:var(--gold);color:var(--bg);}
+.step-dot.pending{background:rgba(255,255,255,0.05);color:var(--w4);}
+.step-line{width:32px;height:1px;background:rgba(255,255,255,0.1);}
+
+main{flex:1;padding:40px 20px;}
+.layout{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:16px;}
+
+.eyebrow{font-size:11px;letter-spacing:0.28em;color:var(--blue);font-weight:700;display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.eyebrow::before{content:'';width:18px;height:1px;background:var(--blue);}
+h1{font-size:clamp(20px,3.5vw,26px);font-weight:700;color:var(--white);margin-bottom:6px;}
+.sub{font-size:14px;color:var(--w6);margin-bottom:24px;line-height:1.6;}
+
+/* BUMP */
+.bumps-box{background:rgba(255,255,255,0.03);border:1px solid var(--gold-border);padding:20px 24px;}
+.bumps-title{font-size:11px;letter-spacing:0.18em;color:var(--gold);font-weight:700;margin-bottom:14px;}
+.bump{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;}
+.bump:last-child{border-bottom:none;padding-bottom:0;}
+.bump-check{width:20px;height:20px;border:2px solid var(--gold-border);background:transparent;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:2px;transition:all 0.2s;}
+.bump-check.checked{background:var(--gold);border-color:var(--gold);}
+.bump-check svg{display:none;}
+.bump-check.checked svg{display:block;}
+.bump-info{flex:1;}
+.bump-name{font-size:14px;font-weight:600;color:var(--white);margin-bottom:3px;}
+.bump-price{font-size:13px;color:var(--gold);font-weight:700;}
+.bump-desc{font-size:12px;color:var(--w4);margin-top:3px;line-height:1.5;}
+
+/* SUMMARY */
+.summary-box{background:var(--bg2);border:1px solid rgba(255,255,255,0.08);padding:20px 24px;}
+.summary-row{display:flex;justify-content:space-between;padding:8px 0;font-size:14px;color:var(--w6);border-bottom:1px solid rgba(255,255,255,0.05);}
+.summary-row:last-of-type{border-bottom:none;}
+.summary-total{display:flex;justify-content:space-between;align-items:center;padding:14px 0 0;margin-top:4px;border-top:1px solid var(--gold-border);}
+.summary-total span{font-size:13px;color:var(--w4);font-weight:700;letter-spacing:0.08em;}
+.summary-total-price{font-size:28px;font-weight:700;color:var(--gold);line-height:1;}
+
+/* QR */
+.qr-box{background:rgba(255,255,255,0.03);border:1px solid var(--gold-border);padding:28px 24px;text-align:center;}
+.qr-label{font-size:11px;letter-spacing:0.2em;color:var(--gold);font-weight:700;margin-bottom:16px;}
+.qr-img-wrap{display:inline-block;padding:12px;background:#fff;margin-bottom:20px;}
+.qr-img-wrap img{width:220px;height:220px;display:block;}
+.bank-info{background:var(--bg2);border:1px solid rgba(255,255,255,0.08);padding:16px 20px;text-align:left;margin-bottom:0;}
+.bank-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;font-size:13px;color:var(--w6);border-bottom:1px solid rgba(255,255,255,0.05);}
+.bank-row:last-child{border-bottom:none;}
+.bank-row strong{font-size:14px;color:var(--white);font-weight:600;letter-spacing:0.02em;}
+.bank-row .copy-btn{font-size:11px;color:var(--blue);cursor:pointer;background:none;border:none;font-family:var(--font);font-weight:600;letter-spacing:0.05em;padding:2px 6px;}
+
+/* STATUS */
+.status-box{padding:18px 24px;text-align:center;border:1px solid;font-weight:600;font-size:15px;letter-spacing:0.05em;}
+.status-box.pending{background:rgba(27,159,232,0.08);border-color:var(--blue-border);color:var(--blue);}
+.status-box.paid{background:rgba(40,200,100,0.08);border-color:rgba(40,200,100,0.3);color:#4CAF50;}
+.pulse{display:inline-block;width:8px;height:8px;border-radius:50%;background:currentColor;margin-right:8px;vertical-align:middle;animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+footer{padding:20px 32px;text-align:center;border-top:1px solid rgba(255,255,255,0.05);color:var(--w4);font-size:12px;}
+
+@media(max-width:520px){
+  .header{padding:16px 20px;}
+  .qr-img-wrap img{width:180px;height:180px;}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-brand">CHUYỂN MÌNH <span>· Shift Within</span></div>
+  <div class="header-steps">
+    <div class="step-dot done">✓</div>
+    <div class="step-line"></div>
+    <div class="step-dot active">2</div>
+    <div class="step-line"></div>
+    <div class="step-dot pending">3</div>
+  </div>
+</header>
+
+<main>
+  <div class="layout">
+    <div>
+      <div class="eyebrow">Bước 2 — Thanh Toán</div>
+      <h1>Hoàn Tất Đăng Ký</h1>
+      <p class="sub">Chuyển khoản theo thông tin bên dưới — đơn được xác nhận tự động trong vòng 30 giây.</p>
+    </div>
+
+    <!-- BUMPS -->
+    <div class="bumps-box" id="bumpsSection" style="display:none;">
+      <div class="bumps-title">NÂNG CẤP ĐƠN HÀNG</div>
+      <div class="bump" data-bump="1" id="bumpItem1" style="display:none;" onclick="toggleBump(1)">
+        <div class="bump-check" id="bumpCheck1">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#060D1A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="bump-info">
+          <div class="bump-name" id="bump1Name">__BUMP1_NAME__</div>
+          <div class="bump-price">+<span id="bump1Display">__BUMP1_DISPLAY__</span>đ</div>
+          <div class="bump-desc">Chỉ có thể thêm vào đơn này</div>
+        </div>
+      </div>
+      <div class="bump" data-bump="2" id="bumpItem2" style="display:none;" onclick="toggleBump(2)">
+        <div class="bump-check" id="bumpCheck2">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#060D1A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="bump-info">
+          <div class="bump-name" id="bump2Name">__BUMP2_NAME__</div>
+          <div class="bump-price">+<span id="bump2Display">__BUMP2_DISPLAY__</span>đ</div>
+          <div class="bump-desc">Chỉ có thể thêm vào đơn này</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="summary-box">
+      <div class="summary-row"><span>Hành Trình 8 Tuần Chuyển Mình</span><span id="basePrice">699.000đ</span></div>
+      <div class="summary-row" id="bump1Row" style="display:none;"><span id="bump1RowName">—</span><span>+<span id="bump1RowPrice">0</span>đ</span></div>
+      <div class="summary-row" id="bump2Row" style="display:none;"><span id="bump2RowName">—</span><span>+<span id="bump2RowPrice">0</span>đ</span></div>
+      <div class="summary-total">
+        <span>TỔNG THANH TOÁN</span>
+        <span class="summary-total-price" id="totalDisplay">699.000đ</span>
+      </div>
+    </div>
+
+    <!-- QR -->
+    <div class="qr-box">
+      <div class="qr-label">QUÉT MÃ QR ĐỂ CHUYỂN KHOẢN</div>
+      <div class="qr-img-wrap">
+        <img id="qrImg" alt="QR thanh toán Chuyển Mình">
+      </div>
+      <div class="bank-info">
+        <div class="bank-row"><span>Ngân hàng</span><strong>__BANK_NAME__</strong></div>
+        <div class="bank-row"><span>Số tài khoản</span><strong>__ACCOUNT_NUMBER__</strong></div>
+        <div class="bank-row"><span>Chủ tài khoản</span><strong>__ACCOUNT_HOLDER__</strong></div>
+        <div class="bank-row">
+          <span>Nội dung CK</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <strong id="ckContent">—</strong>
+            <button class="copy-btn" onclick="copyText('ckContent')">COPY</button>
+          </div>
+        </div>
+        <div class="bank-row">
+          <span>Số tiền</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <strong id="amountDisplay">—</strong>
+            <button class="copy-btn" onclick="copyAmount()">COPY</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATUS -->
+    <div class="status-box pending" id="statusBox">
+      <span class="pulse"></span><span id="statusText">Đang chờ giao dịch...</span>
+    </div>
+  </div>
+</main>
+
+<footer>© 2026 Chuyển Mình · Shift Within · Quinn Nguyễn</footer>
+
+<script>
+  const GAS_URL = '__GAS_URL__';
+  const BASE_PRICE = 699000;
+  const BUMP1_PRICE = __BUMP1_PRICE__;
+  const BUMP2_PRICE = __BUMP2_PRICE__;
+
+  const order = JSON.parse(sessionStorage.getItem('order') || '{}');
+  if (!order.orderId) { window.location.href = '/dang-ky'; }
+
+  document.getElementById('ckContent').textContent = order.ckContent || '—';
+
+  function fmt(n){ return Number(n).toLocaleString('vi-VN'); }
+
+  function calcTotal(){
+    let total = BASE_PRICE;
+    const b1 = document.getElementById('bumpCheck1').classList.contains('checked');
+    const b2 = document.getElementById('bumpCheck2').classList.contains('checked');
+    if(b1) total += BUMP1_PRICE;
+    if(b2) total += BUMP2_PRICE;
+    return { total, b1, b2 };
+  }
+
+  function updateQR(amount){
+    const url = 'https://qr.sepay.vn/img?acc=__ACCOUNT_NUMBER__&bank=__BANK__&amount=' + amount + '&des=' + encodeURIComponent(order.ckContent || '');
+    document.getElementById('qrImg').src = url;
+    document.getElementById('amountDisplay').textContent = fmt(amount) + 'đ';
+    document.getElementById('totalDisplay').textContent = fmt(amount) + 'đ';
+  }
+
+  function toggleBump(n){
+    const check = document.getElementById('bumpCheck' + n);
+    check.classList.toggle('checked');
+    const row = document.getElementById('bump' + n + 'Row');
+    if(check.classList.contains('checked')){
+      row.style.display = 'flex';
+    } else {
+      row.style.display = 'none';
+    }
+    const { total, b1, b2 } = calcTotal();
+    updateQR(total);
+    updateOrderAPI(b1, b2, total);
+  }
+
+  async function updateOrderAPI(b1, b2, total){
+    try {
+      await fetch(GAS_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'updateOrder', orderId: order.orderId, data: { bump1: b1, bump2: b2, totalAmount: total } })
+      });
+    } catch(e){ console.error(e); }
+  }
+
+  function copyText(id){
+    const t = document.getElementById(id).textContent;
+    navigator.clipboard.writeText(t).catch(()=>{});
+  }
+  function copyAmount(){
+    const { total } = calcTotal();
+    navigator.clipboard.writeText(String(total)).catch(()=>{});
+  }
+
+  // Show bumps if configured
+  if(BUMP1_PRICE > 0){
+    document.getElementById('bumpItem1').style.display = 'flex';
+    document.getElementById('bump1RowName').textContent = document.getElementById('bump1Name').textContent;
+    document.getElementById('bump1RowPrice').textContent = fmt(BUMP1_PRICE);
+    document.getElementById('bumpsSection').style.display = 'block';
+  }
+  if(BUMP2_PRICE > 0){
+    document.getElementById('bumpItem2').style.display = 'flex';
+    document.getElementById('bump2RowName').textContent = document.getElementById('bump2Name').textContent;
+    document.getElementById('bump2RowPrice').textContent = fmt(BUMP2_PRICE);
+    document.getElementById('bumpsSection').style.display = 'block';
+  }
+
+  updateQR(BASE_PRICE);
+
+  // Poll status
+  async function pollStatus(){
+    try {
+      const res = await fetch(GAS_URL + '?action=getStatus&orderId=' + encodeURIComponent(order.orderId));
+      const json = await res.json();
+      if(json.status === 'PAID'){
+        const box = document.getElementById('statusBox');
+        box.className = 'status-box paid';
+        document.getElementById('statusText').textContent = '✓ Đã nhận giao dịch · Đang chuyển trang...';
+        setTimeout(()=>{ window.location.href = '/xac-nhan'; }, 1500);
+        return;
+      }
+    } catch(e){ console.error(e); }
+    setTimeout(pollStatus, 5000);
+  }
+  pollStatus();
+</script>
+</body>
+</html>

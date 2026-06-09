@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Đăng Ký — Chuyển Mình · Shift Within</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060D1A;--bg2:#0A1628;--bg3:#0D1E3A;
+  --gold:#D4B896;--gold-dim:rgba(212,184,150,0.12);--gold-border:rgba(212,184,150,0.2);
+  --blue:#1B9FE8;--blue-dim:rgba(27,159,232,0.08);--blue-border:rgba(27,159,232,0.18);
+  --white:#FAFAFA;--w8:rgba(250,250,250,0.8);--w6:rgba(250,250,250,0.6);--w4:rgba(250,250,250,0.4);--w2:rgba(250,250,250,0.2);
+  --font:'Be Vietnam Pro',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font);background:var(--bg);color:var(--white);min-height:100vh;display:flex;flex-direction:column;}
+
+/* HEADER */
+.header{padding:20px 32px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;}
+.header-brand{font-size:13px;letter-spacing:0.2em;color:var(--gold);font-weight:700;}
+.header-brand span{color:var(--w4);font-weight:400;}
+.header-steps{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--w4);}
+.step-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+.step-dot.active{background:var(--gold);color:var(--bg);}
+.step-dot.done{background:rgba(212,184,150,0.15);color:var(--gold);border:1px solid var(--gold-border);}
+.step-dot.pending{background:rgba(255,255,255,0.05);color:var(--w4);}
+.step-line{width:32px;height:1px;background:rgba(255,255,255,0.1);}
+
+/* MAIN */
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;}
+.card{width:100%;max-width:520px;}
+
+.card-eyebrow{font-size:11px;letter-spacing:0.28em;color:var(--blue);font-weight:700;display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.card-eyebrow::before{content:'';width:18px;height:1px;background:var(--blue);flex-shrink:0;}
+.card h1{font-size:clamp(22px,4vw,30px);font-weight:700;color:var(--white);line-height:1.2;margin-bottom:8px;}
+.card .sub{font-size:15px;color:var(--w6);line-height:1.7;margin-bottom:28px;}
+
+/* OFFER STRIP */
+.offer-strip{background:var(--gold-dim);border:1px solid var(--gold-border);padding:16px 20px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.offer-strip .label{font-size:12px;color:var(--w6);font-weight:500;}
+.offer-strip .price-wrap{display:flex;align-items:baseline;gap:10px;}
+.offer-strip .old{font-size:14px;color:var(--w2);text-decoration:line-through;}
+.offer-strip .new{font-size:26px;font-weight:700;color:var(--gold);line-height:1;}
+.offer-strip .badge{font-size:10px;letter-spacing:0.1em;background:var(--gold);color:var(--bg);padding:4px 10px;font-weight:700;white-space:nowrap;}
+
+/* FORM */
+.form-box{background:rgba(255,255,255,0.03);border:1px solid var(--gold-border);padding:32px 28px;}
+.form-group{margin-bottom:18px;}
+.form-group label{display:block;font-size:11px;letter-spacing:0.14em;color:var(--gold);margin-bottom:7px;font-weight:700;}
+.form-group input,
+.form-group select{
+  width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--gold-border);
+  padding:13px 15px;color:var(--white);font-family:var(--font);font-size:15px;font-weight:400;
+  outline:none;transition:border-color 0.2s;-webkit-appearance:none;border-radius:0;
+}
+.form-group input::placeholder{color:rgba(250,250,250,0.2);}
+.form-group input:focus,
+.form-group select:focus{border-color:var(--gold);}
+.form-group select option{background:var(--bg2);}
+.form-submit{
+  width:100%;background:var(--gold);color:var(--bg);padding:17px;
+  font-family:var(--font);font-size:15px;font-weight:700;letter-spacing:0.12em;
+  border:none;cursor:pointer;margin-top:8px;transition:opacity 0.2s;
+}
+.form-submit:hover{opacity:0.9;}
+.form-submit:disabled{opacity:0.5;cursor:not-allowed;}
+.form-notes{margin-top:16px;font-size:12px;color:var(--w4);line-height:2.2;text-align:center;}
+.form-notes strong{color:var(--gold);}
+
+.error-msg{background:rgba(220,50,50,0.1);border:1px solid rgba(220,50,50,0.3);color:#FF6B6B;font-size:13px;padding:12px 16px;margin-top:12px;display:none;}
+
+/* FOOTER */
+footer{padding:20px 32px;text-align:center;border-top:1px solid rgba(255,255,255,0.05);color:var(--w4);font-size:12px;}
+
+@media(max-width:520px){
+  .header{padding:16px 20px;}
+  .header-brand{font-size:12px;}
+  .form-box{padding:24px 20px;}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-brand">CHUYỂN MÌNH <span>· Shift Within</span></div>
+  <div class="header-steps">
+    <div class="step-dot active">1</div>
+    <div class="step-line"></div>
+    <div class="step-dot pending">2</div>
+    <div class="step-line"></div>
+    <div class="step-dot pending">3</div>
+  </div>
+</header>
+
+<main>
+  <div class="card">
+    <div class="card-eyebrow">Bước 1 — Thông Tin Đăng Ký</div>
+    <h1>Giữ Suất Hành Trình Của Bạn</h1>
+    <p class="sub">Chỉ còn 30 suất mỗi tháng — Quinn check-in cá nhân từng người trong 4 tuần đầu.</p>
+
+    <div class="offer-strip">
+      <div>
+        <div class="label">Hành Trình 8 Tuần Chuyển Mình</div>
+        <div class="price-wrap">
+          <span class="old">5.200.000đ</span>
+          <span class="new">699.000đ</span>
+        </div>
+      </div>
+      <span class="badge">TIẾT KIỆM 87%</span>
+    </div>
+
+    <div class="form-box">
+      <form id="orderForm" novalidate>
+        <div class="form-group">
+          <label>Họ và tên *</label>
+          <input type="text" name="name" placeholder="Nguyễn Thị A" required>
+        </div>
+        <div class="form-group">
+          <label>Số điện thoại *</label>
+          <input type="tel" name="phone" placeholder="09xx xxx xxx" required>
+        </div>
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" name="email" placeholder="email@gmail.com" required>
+        </div>
+        <div class="form-group">
+          <label>Bạn đang ở đâu trong hành trình?</label>
+          <select name="goal">
+            <option value="">Chọn tình trạng của bạn...</option>
+            <option value="Chưa bắt đầu, muốn thay đổi nhưng chưa biết từ đâu">Chưa bắt đầu, muốn thay đổi nhưng chưa biết từ đâu</option>
+            <option value="Đã thử nhiều lần nhưng cứ bỏ cuộc">Đã thử nhiều lần nhưng cứ bỏ cuộc</option>
+            <option value="Đang tập nhưng không thấy kết quả">Đang tập nhưng không thấy kết quả</option>
+            <option value="Muốn duy trì kết quả đã có lâu dài hơn">Muốn duy trì kết quả đã có lâu dài hơn</option>
+          </select>
+        </div>
+        <button type="submit" class="form-submit" id="submitBtn">Tiếp Tục Thanh Toán →</button>
+        <div class="error-msg" id="errorMsg"></div>
+      </form>
+      <div class="form-notes">
+        ✓ Cam kết hoàn <strong>100% tiền</strong> trong 30 ngày &nbsp;·&nbsp; ✓ Thông tin được bảo mật tuyệt đối
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>© 2026 Chuyển Mình · Shift Within · Quinn Nguyễn</footer>
+
+<script>
+  const GAS_URL = '__GAS_URL__';
+
+  document.getElementById('orderForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    const errEl = document.getElementById('errorMsg');
+    const form = e.target;
+
+    const name = form.name.value.trim();
+    const phone = form.phone.value.trim();
+    const email = form.email.value.trim();
+
+    if (!name || !phone || !email) {
+      errEl.textContent = 'Vui lòng điền đầy đủ Họ tên, Số điện thoại và Email nhé!';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    errEl.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Đang xử lý...';
+
+    const data = {
+      name: name,
+      phone: phone,
+      email: email,
+      goal: form.goal.value,
+      bump1: false,
+      bump2: false,
+      totalAmount: 699000
+    };
+
+    try {
+      const res = await fetch(GAS_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'createOrder', data: data })
+      });
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error || 'Lỗi tạo đơn');
+
+      sessionStorage.setItem('order', JSON.stringify({
+        orderId: json.orderId,
+        ckContent: json.ckContent,
+        totalAmount: json.totalAmount,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        goal: data.goal
+      }));
+
+      window.location.href = '/checkout';
+    } catch (err) {
+      errEl.textContent = 'Có lỗi xảy ra: ' + err.message + '. Vui lòng thử lại.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Tiếp Tục Thanh Toán →';
+    }
+  });
+</script>
+</body>
+</html>

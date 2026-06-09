@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Xác Nhận Đơn Hàng — Chuyển Mình · Shift Within</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060D1A;--bg2:#0A1628;--bg3:#0D1E3A;
+  --gold:#D4B896;--gold-dim:rgba(212,184,150,0.12);--gold-border:rgba(212,184,150,0.2);
+  --blue:#1B9FE8;--blue-dim:rgba(27,159,232,0.08);--blue-border:rgba(27,159,232,0.18);
+  --white:#FAFAFA;--w8:rgba(250,250,250,0.8);--w6:rgba(250,250,250,0.6);--w4:rgba(250,250,250,0.4);--w2:rgba(250,250,250,0.2);
+  --font:'Be Vietnam Pro',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--font);background:var(--bg);color:var(--white);min-height:100vh;display:flex;flex-direction:column;}
+
+/* HEADER */
+.header{padding:20px 32px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;}
+.header-brand{font-size:13px;letter-spacing:0.2em;color:var(--gold);font-weight:700;}
+.header-brand span{color:var(--w4);font-weight:400;}
+.header-steps{display:flex;align-items:center;gap:8px;}
+.step-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+.step-dot.done{background:rgba(212,184,150,0.15);color:var(--gold);border:1px solid var(--gold-border);}
+.step-dot.active{background:var(--gold);color:var(--bg);}
+.step-line{width:32px;height:1px;background:rgba(255,255,255,0.1);}
+
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;}
+.card{width:100%;max-width:560px;}
+
+/* SUCCESS ICON */
+.success-icon{width:72px;height:72px;border-radius:50%;background:var(--gold-dim);border:2px solid var(--gold-border);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;}
+.success-icon svg{color:var(--gold);}
+
+.card-title{font-size:clamp(22px,4vw,30px);font-weight:700;color:var(--white);text-align:center;margin-bottom:8px;}
+.card-sub{font-size:15px;color:var(--w6);text-align:center;line-height:1.7;margin-bottom:32px;}
+.card-sub strong{color:var(--gold);}
+
+/* ORDER INFO */
+.info-box{background:var(--bg2);border:1px solid var(--gold-border);padding:20px 24px;margin-bottom:24px;}
+.info-title{font-size:11px;letter-spacing:0.2em;color:var(--gold);font-weight:700;margin-bottom:14px;}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:14px;color:var(--w6);border-bottom:1px solid rgba(255,255,255,0.05);}
+.info-row:last-child{border-bottom:none;}
+.info-row strong{color:var(--white);font-weight:600;}
+
+/* NEXT STEPS */
+.steps-box{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);padding:24px;}
+.steps-title{font-size:11px;letter-spacing:0.2em;color:var(--blue);font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:10px;}
+.steps-title::before{content:'';width:18px;height:1px;background:var(--blue);}
+.step-item{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.step-item:last-child{border-bottom:none;padding-bottom:0;}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--gold-dim);border:1px solid var(--gold-border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--gold);flex-shrink:0;}
+.step-content{flex:1;}
+.step-content h4{font-size:15px;font-weight:600;color:var(--white);margin-bottom:4px;}
+.step-content p{font-size:13px;color:var(--w4);line-height:1.6;}
+.step-content a{color:var(--blue);text-decoration:none;font-weight:600;}
+
+/* CTA */
+.cta-wrap{text-align:center;margin-top:28px;}
+.btn-gold{display:inline-flex;align-items:center;justify-content:center;padding:16px 36px;background:var(--gold);color:var(--bg);font-family:var(--font);font-size:15px;font-weight:700;letter-spacing:0.08em;border:none;cursor:pointer;text-decoration:none;transition:opacity 0.2s;}
+.btn-gold:hover{opacity:0.9;}
+
+footer{padding:20px 32px;text-align:center;border-top:1px solid rgba(255,255,255,0.05);color:var(--w4);font-size:12px;margin-top:auto;}
+
+@media(max-width:520px){
+  .header{padding:16px 20px;}
+  .steps-box,.info-box{padding:18px 16px;}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-brand">CHUYỂN MÌNH <span>· Shift Within</span></div>
+  <div class="header-steps">
+    <div class="step-dot done">✓</div>
+    <div class="step-line"></div>
+    <div class="step-dot done">✓</div>
+    <div class="step-line"></div>
+    <div class="step-dot active">✓</div>
+  </div>
+</header>
+
+<main>
+  <div class="card">
+    <div class="success-icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+
+    <h1 class="card-title">Chào Mừng Bạn Đến Với Hành Trình!</h1>
+    <p class="card-sub">Đăng ký thành công. Email xác nhận và hướng dẫn bắt đầu đã được gửi tới hộp thư của bạn.</p>
+
+    <div class="info-box">
+      <div class="info-title">THÔNG TIN ĐƠN HÀNG</div>
+      <div class="info-row"><span>Mã đơn</span><strong id="orderId">—</strong></div>
+      <div class="info-row"><span>Họ tên</span><strong id="orderName">—</strong></div>
+      <div class="info-row"><span>Email</span><strong id="orderEmail">—</strong></div>
+      <div class="info-row"><span>Số điện thoại</span><strong id="orderPhone">—</strong></div>
+      <div class="info-row"><span>Số tiền đã thanh toán</span><strong id="orderAmount" style="color:var(--gold);">—</strong></div>
+    </div>
+
+    <div class="steps-box">
+      <div class="steps-title">Bước Tiếp Theo</div>
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Kiểm tra Email</h4>
+          <p>Email xác nhận và link truy cập đã được gửi. Nếu không thấy, kiểm tra tab Promotions hoặc Spam.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Tham gia cộng đồng Telegram</h4>
+          <p>Link nhóm kín có trong email. Đây là nơi bạn kết nối với cộng đồng Chuyển Mình và nhận hỗ trợ từ Quinn.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Bắt Đầu Tuần 1</h4>
+          <p>Mở link khoá học trong email và làm theo hướng dẫn. Chỉ cần 15–20 phút mỗi ngày để bắt đầu.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-wrap">
+      <a href="/" class="btn-gold">← Quay Về Trang Chính</a>
+    </div>
+  </div>
+</main>
+
+<footer>© 2026 Chuyển Mình · Shift Within · Quinn Nguyễn &nbsp;·&nbsp; Cần hỗ trợ? Liên hệ __HOTLINE__</footer>
+
+<script>
+  const order = JSON.parse(sessionStorage.getItem('order') || '{}');
+  if(order.orderId){
+    document.getElementById('orderId').textContent = order.orderId;
+    document.getElementById('orderName').textContent = order.name || '—';
+    document.getElementById('orderEmail').textContent = order.email || '—';
+    document.getElementById('orderPhone').textContent = order.phone || '—';
+    const amt = Number(order.totalAmount || 0).toLocaleString('vi-VN');
+    document.getElementById('orderAmount').textContent = amt + 'đ';
+  }
+</script>
+</body>
+</html>
