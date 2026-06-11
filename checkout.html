@@ -148,9 +148,9 @@ footer{padding:20px 32px;text-align:center;border-top:1px solid rgba(255,255,255
         <img id="qrImg" alt="QR thanh toán Chuyển Mình">
       </div>
       <div class="bank-info">
-        <div class="bank-row"><span>Ngân hàng</span><strong>__BANK_NAME__</strong></div>
-        <div class="bank-row"><span>Số tài khoản</span><strong>__ACCOUNT_NUMBER__</strong></div>
-        <div class="bank-row"><span>Chủ tài khoản</span><strong>__ACCOUNT_HOLDER__</strong></div>
+        <div class="bank-row"><span>Ngân hàng</span><strong>VPBank</strong></div>
+        <div class="bank-row"><span>Số tài khoản</span><strong>606804407</strong></div>
+        <div class="bank-row"><span>Chủ tài khoản</span><strong>HKD QUINNFIT</strong></div>
         <div class="bank-row">
           <span>Nội dung CK</span>
           <div style="display:flex;align-items:center;gap:8px;">
@@ -180,8 +180,8 @@ footer{padding:20px 32px;text-align:center;border-top:1px solid rgba(255,255,255
 <script>
   const GAS_URL = 'https://script.google.com/macros/s/AKfycbyh3hJ0oP04xH5uGgITjq0kICNTR9cg2LrxTPkn1g8vmf24bDAZSpDEpYYckSvo1z-DDg/exec';
   const BASE_PRICE = 699000;
-  const BUMP1_PRICE = __BUMP1_PRICE__;
-  const BUMP2_PRICE = __BUMP2_PRICE__;
+  const BUMP1_PRICE = 500000;
+  const BUMP2_PRICE = 200000;
 
   const order = JSON.parse(sessionStorage.getItem('order') || '{}');
   if (!order.orderId) { window.location.href = '/dang-ky'; }
@@ -200,7 +200,7 @@ footer{padding:20px 32px;text-align:center;border-top:1px solid rgba(255,255,255
   }
 
   function updateQR(amount){
-    const url = 'https://qr.sepay.vn/img?acc=__ACCOUNT_NUMBER__&bank=__BANK__&amount=' + amount + '&des=' + encodeURIComponent(order.ckContent || '');
+    const url = 'https://qr.sepay.vn/img?acc=606804407&bank=VPB&amount=' + amount + '&des=' + encodeURIComponent(order.ckContent || '');
     document.getElementById('qrImg').src = url;
     document.getElementById('amountDisplay').textContent = fmt(amount) + 'đ';
     document.getElementById('totalDisplay').textContent = fmt(amount) + 'đ';

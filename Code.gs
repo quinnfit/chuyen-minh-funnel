@@ -9,7 +9,7 @@ const CONFIG = {
   SHEET_TAB_NAME: 'Orders',
 
   // Điền API key Sepay sau khi liên kết VPBank xong
-  SEPAY_API_KEY: '__SEPAY_API_KEY__',
+  SEPAY_API_KEY: 'CG0VVKTTYKTUNABBL47OERHIERYIWE2ZIJ3YM2H4WPDQOFJS65JZ5LSGDU19ASNM',
 
   EMAIL_SENDER_NAME: 'Chuyển Mình · Shift Within',
   EMAIL_REPLY_TO: 'quinnfit.training@gmail.com',
