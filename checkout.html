@@ -149,7 +149,7 @@ footer{padding:20px 32px;text-align:center;border-top:1px solid rgba(255,255,255
       </div>
       <div class="bank-info">
         <div class="bank-row"><span>Ngân hàng</span><strong>VPBank</strong></div>
-        <div class="bank-row"><span>Số tài khoản</span><strong>606804407</strong></div>
+        <div class="bank-row"><span>Số tài khoản</span><strong>AGBSPQUINNFIT</strong></div>
         <div class="bank-row"><span>Chủ tài khoản</span><strong>HKD QUINNFIT</strong></div>
         <div class="bank-row">
           <span>Nội dung CK</span>
@@ -200,7 +200,7 @@ footer{padding:20px 32px;text-align:center;border-top:1px solid rgba(255,255,255
   }
 
   function updateQR(amount){
-    const url = 'https://qr.sepay.vn/img?acc=606804407&bank=VPB&amount=' + amount + '&des=' + encodeURIComponent(order.ckContent || '');
+    const url = 'https://qr.sepay.vn/img?acc=AGBSPQUINNFIT&bank=VPB&amount=' + amount + '&des=' + encodeURIComponent(order.ckContent || '');
     document.getElementById('qrImg').src = url;
     document.getElementById('amountDisplay').textContent = fmt(amount) + 'đ';
     document.getElementById('totalDisplay').textContent = fmt(amount) + 'đ';
