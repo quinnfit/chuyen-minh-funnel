@@ -8,6 +8,7 @@
     { "source": "/xac-nhan", "destination": "/xac-nhan.html" },
     { "source": "/privacy", "destination": "/privacy.html" },
     { "source": "/refund", "destination": "/refund.html" },
-    { "source": "/tdee", "destination": "/tdee.html" }
+    { "source": "/tdee", "destination": "/tdee.html" },
+    { "source": "/khoahoc", "destination": "/khoahoc.html" }
   ]
 }

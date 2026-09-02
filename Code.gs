@@ -1,40 +1,40 @@
 /**
  * ============================================================
- * Chuyển Mình · Shift Within — Funnel Backend · Google Apps Script
+ * 21 Ngày Hiểu Mình™ — Funnel Backend · Google Apps Script
  * ============================================================
  */
 
 const CONFIG = {
-  SHEET_ID: '1CNJXTKqbip9-AZydO5n5cT9nUAp9OyLmzKzfkNiuRr8',
+  SHEET_ID: '1vld_cg-b28w3a9wkzl6Ie831L8EETn7gArRCaI__XsA',
   SHEET_TAB_NAME: 'Orders',
 
-  // Điền API key Sepay sau khi liên kết VPBank xong
   SEPAY_API_KEY: 'CG0VVKTTYKTUNABBL47OERHIERYIWE2ZIJ3YM2H4WPDQOFJS65JZ5LSGDU19ASNM',
 
-  EMAIL_SENDER_NAME: 'Chuyển Mình · Shift Within',
+  EMAIL_SENDER_NAME: '21 Ngày Hiểu Mình™',
   EMAIL_REPLY_TO: 'quinnfit.training@gmail.com',
 
-  // Không dùng Zalo — để trống
-  ZALO_GROUP_URL: '',
+  // Điền link Zalo group sau khi có
+  ZALO_GROUP_URL: '__ZALO_GROUP_URL__',
 
-  PRODUCT_NAME: 'Hành Trình 8 Tuần Chuyển Mình',
-  PRODUCT_PRICE: 699000,
-  // Điền link Drive tài liệu khoá học sau
-  EBOOK_URL: '__EBOOK_URL__',
+  PRODUCT_NAME: '21 Ngày Hiểu Mình™',
+  PRODUCT_PRICE: 499000,
+  // Video chào mừng — gửi ngay trong email xác nhận. Nội dung 3 Vòng sẽ mở khoá dần, KHÔNG gửi hết trong email này.
+  WELCOME_VIDEO_URL: '__WELCOME_VIDEO_URL__',
 
-  BUMP1_NAME: '1-1 Call Định Hướng Lộ Trình với Quinn (30 phút)',
-  BUMP1_PRICE: 500000,
-  BUMP1_URL: '__BUMP1_URL__',
+  BUMP1_NAME: '',
+  BUMP1_PRICE: 0,
+  BUMP1_URL: '',
 
-  BUMP2_NAME: 'Meal Plan Mẫu 1 Tuần Cá Nhân Hoá',
-  BUMP2_PRICE: 200000,
-  BUMP2_URL: '__BUMP2_URL__',
+  BUMP2_NAME: '',
+  BUMP2_PRICE: 0,
+  BUMP2_URL: '',
 
-  CK_PREFIX: 'CM',
+  // Sepay webhook filter đã sửa để nhận mã bắt đầu bằng "HM" — phải giữ nguyên prefix này
+  CK_PREFIX: 'HM',
 
   HOTLINE: '__HOTLINE__',
   ADDRESS: 'Việt Nam',
-  SITE_URL: 'https://chuyen-minh-funnel.vercel.app'
+  SITE_URL: 'https://21ngay-hieuminh.vercel.app'
 };
 
 // ============================================================
@@ -48,17 +48,30 @@ function getSheet() {
     sheet.appendRow([
       'orderId','createdAt','name','phone','email','goal',
       'bump1','bump2','totalAmount','ckContent','status',
-      'paidAt','sepayTxId','emailSent','rawSepay'
+      'paidAt','sepayTxId','emailSent','rawSepay','password'
     ]);
-    sheet.getRange('A1:O1').setFontWeight('bold').setBackground('#060D1A').setFontColor('#D4B896');
+    sheet.getRange('A1:P1').setFontWeight('bold').setBackground('#060D1A').setFontColor('#D4B896');
     sheet.setFrozenRows(1);
-    sheet.setColumnWidths(1, 15, 130);
+    sheet.setColumnWidths(1, 16, 130);
     const dateFormat = 'dd/MM/yyyy HH:mm:ss';
     sheet.getRange('B:B').setNumberFormat(dateFormat);
     sheet.getRange('L:L').setNumberFormat(dateFormat);
     sheet.getRange('N:N').setNumberFormat(dateFormat);
   }
   return sheet;
+}
+
+// Chạy 1 lần để thêm cột "password" (cột P) vào Sheet đang có sẵn.
+function addPasswordColumn() {
+  const sheet = getSheet();
+  if (sheet.getRange(1, 16).getValue()) {
+    Logger.log('Cột password (P) đã có sẵn.');
+    return;
+  }
+  sheet.getRange(1, 16).setValue('password')
+    .setFontWeight('bold').setBackground('#060D1A').setFontColor('#D4B896');
+  sheet.setColumnWidth(16, 130);
+  Logger.log('Đã thêm cột password ở vị trí P.');
 }
 
 function formatDateColumns() {
@@ -129,7 +142,7 @@ function createOrder(data) {
     Number(data.totalAmount) || CONFIG.PRODUCT_PRICE,
     ckContent,
     'PENDING',
-    '', '', '', ''
+    '', '', '', '', ''
   ]);
 
   return {
@@ -170,6 +183,24 @@ function getStatus(orderId) {
   };
 }
 
+// Xác thực đăng nhập khu vực học viên: email + password + đơn đã PAID.
+function verifyLogin(email, password) {
+  if (!email || !password) return { success: false, error: 'Missing credentials' };
+  const sheet = getSheet();
+  const data = sheet.getDataRange().getValues();
+  const emailLower = String(email).toLowerCase().trim();
+  const pwd = String(password).trim();
+  for (let i = 1; i < data.length; i++) {
+    const rowEmail = String(data[i][4] || '').toLowerCase().trim();
+    const rowPwd = String(data[i][15] || '').trim();
+    const status = data[i][10];
+    if (rowEmail === emailLower && rowPwd && rowPwd === pwd && status === 'PAID') {
+      return { success: true, name: data[i][2], orderId: data[i][0] };
+    }
+  }
+  return { success: false, error: 'Invalid credentials' };
+}
+
 function detectBumpsFromAmount(amount) {
   const base = CONFIG.PRODUCT_PRICE;
   const p1 = CONFIG.BUMP1_PRICE;
@@ -199,7 +230,7 @@ function handleSepayWebhook(payload) {
       '', '', '', '',
       '', '', amount, content,
       'UNMATCHED', '', String(payload.id || ''), '',
-      JSON.stringify(payload)
+      JSON.stringify(payload), ''
     ]);
     return { success: true, message: 'No matching order, logged for manual review' };
   }
@@ -231,11 +262,19 @@ function handleSepayWebhook(payload) {
 
 function triggerPaidActions(rowIndex) {
   const sheet = getSheet();
-  const data = sheet.getRange(rowIndex, 1, 1, 15).getValues()[0];
+  const data = sheet.getRange(rowIndex, 1, 1, 16).getValues()[0];
 
   if (data[13] && String(data[13]).indexOf('ERROR') !== 0) {
     Logger.log('Order ' + data[0] + ' already processed, skipping');
     return;
+  }
+
+  // Sinh mật khẩu đăng nhập khu vực học viên nếu chưa có (cột P = 16).
+  let password = data[15];
+  if (!password) {
+    password = generatePassword(8);
+    sheet.getRange(rowIndex, 16).setValue(password);
+    data[15] = password;
   }
 
   try {
@@ -246,7 +285,8 @@ function triggerPaidActions(rowIndex) {
       goal: data[5],
       bump1: !!data[6],
       bump2: !!data[7],
-      totalAmount: data[8]
+      totalAmount: data[8],
+      password: password
     });
     sheet.getRange(rowIndex, 14).setValue(new Date());
   } catch (err) {
@@ -278,14 +318,14 @@ function sendConfirmationEmail(order) {
   const v = {
     name: order.name,
     orderId: order.orderId,
+    email: order.email,
+    password: order.password,
     totalAmount: formatVnd(order.totalAmount),
     goal: order.goal,
-    hasBumps: !!(order.bump1 || order.bump2),
-    bump1: !!order.bump1,
-    bump2: !!order.bump2
+    hasZalo: !!CONFIG.ZALO_GROUP_URL
   };
 
-  const subject = 'Chuyển Mình · Shift Within — Xác nhận đơn hàng · Mã ' + v.orderId;
+  const subject = '21 Ngày Hiểu Mình™ — Xác nhận đơn hàng · Mã ' + v.orderId;
 
   MailApp.sendEmail({
     to: order.email,
@@ -298,54 +338,58 @@ function sendConfirmationEmail(order) {
 }
 
 function buildHtmlEmail(v) {
-  let bumpSection = '';
-  if (v.hasBumps) {
-    bumpSection = '<h3 style="font-size:16px;color:#222;margin:24px 0 8px">Dịch vụ đi kèm bạn đã đăng ký</h3>';
-    if (v.bump1) {
-      bumpSection += '<p>• <strong>' + CONFIG.BUMP1_NAME + '</strong><br>'
-        + 'Quinn sẽ liên hệ sắp xếp lịch call qua email này trong vòng 24 giờ.</p>';
-    }
-    if (v.bump2) {
-      bumpSection += '<p>• <strong>' + CONFIG.BUMP2_NAME + '</strong><br>'
-        + 'Tải tại: <a href="' + CONFIG.BUMP2_URL + '" style="color:#1B9FE8">' + CONFIG.BUMP2_URL + '</a></p>';
-    }
-  }
+  const zaloRow = v.hasZalo
+    ? '<p>3. Tham gia <a href="' + CONFIG.ZALO_GROUP_URL + '" style="color:#1B9FE8">cộng đồng Zalo kín</a> — nơi bạn duy trì nhịp thực hành cùng mọi người.</p>'
+    : '<p>3. Cộng đồng Zalo kín — link sẽ được gửi riêng cho bạn trong 24 giờ.</p>';
 
   return [
     '<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"></head>',
     '<body style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.7;color:#222;max-width:600px;margin:0 auto;padding:24px;background:#fff">',
 
     '<div style="background:#060D1A;padding:20px 24px;margin-bottom:24px">',
-    '<p style="color:#D4B896;font-size:13px;letter-spacing:0.2em;font-weight:700;margin:0">CHUYỂN MÌNH · SHIFT WITHIN</p>',
+    '<p style="color:#D4B896;font-size:13px;letter-spacing:0.2em;font-weight:700;margin:0">21 NGÀY HIỂU MÌNH™</p>',
     '</div>',
 
     '<h2 style="color:#222;font-size:20px;margin:0 0 16px">Chào ' + esc(v.name) + ',</h2>',
-    '<p>Thanh toán đã được xác nhận. Chào mừng bạn đến với <strong>Hành Trình 8 Tuần Chuyển Mình</strong>!</p>',
+    '<p>Thanh toán đã được xác nhận. Chào mừng bạn bắt đầu hành trình <strong>21 Ngày Hiểu Mình™</strong> — hiểu bản thân, hiểu cơ thể để chuyển hóa vóc dáng một cách tự nhiên, không kỷ luật cưỡng ép.</p>',
 
     '<div style="background:#f9f6f2;padding:16px 20px;border-left:3px solid #D4B896;margin:20px 0">',
     '<p style="margin:0;font-size:14px">',
     'Mã đơn: <strong>' + esc(v.orderId) + '</strong><br>',
     'Số tiền: <strong>' + v.totalAmount + 'đ</strong>',
-    v.goal ? '<br>Tình trạng: <strong>' + esc(v.goal) + '</strong>' : '',
+    v.goal ? '<br>Điều bạn đang gặp phải: <strong>' + esc(v.goal) + '</strong>' : '',
     '</p>',
     '</div>',
 
-    '<h3 style="font-size:16px;color:#222;margin:24px 0 8px">Tài liệu khoá học</h3>',
-    '<p><a href="' + CONFIG.EBOOK_URL + '" style="color:#1B9FE8;font-weight:600">' + CONFIG.EBOOK_URL + '</a></p>',
+    '<h3 style="font-size:16px;color:#222;margin:24px 0 8px">Thông tin đăng nhập khu vực học viên</h3>',
+    '<div style="background:#fafafa;padding:16px 20px;border:2px dashed #D4B896;border-radius:8px;margin:12px 0;font-family:monospace;font-size:14px">',
+    'Trang học: <strong>' + CONFIG.SITE_URL + '/khoahoc</strong><br>',
+    'Email: <strong>' + esc(v.email) + '</strong><br>',
+    'Mật khẩu: <strong style="color:#5C1A1B;font-size:16px">' + esc(v.password) + '</strong>',
+    '</div>',
+    '<p style="margin:12px 0"><a href="' + CONFIG.SITE_URL + '/khoahoc" style="display:inline-block;background:#D4B896;color:#0A0A0A;padding:12px 26px;border-radius:8px;text-decoration:none;font-weight:700;font-size:14px">Vào khu vực học viên →</a></p>',
+    '<p style="font-size:13px;color:#666">Lưu lại email và mật khẩu này để đăng nhập lại bất cứ lúc nào. Nội dung mở dần theo từng ngày.</p>',
 
-    bumpSection,
+    '<h3 style="font-size:16px;color:#222;margin:24px 0 8px">Video chào mừng từ Quinn</h3>',
+    '<p><a href="' + CONFIG.WELCOME_VIDEO_URL + '" style="color:#1B9FE8;font-weight:600">' + CONFIG.WELCOME_VIDEO_URL + '</a></p>',
+
+    '<div style="background:#f9f6f2;padding:16px 20px;border-left:3px solid #1B9FE8;margin:24px 0;font-size:14px">',
+    '<p style="margin:0"><strong>Về cách nội dung được gửi:</strong><br>',
+    'Nội dung hành trình (video + sách bài tập từng Vòng) sẽ được <strong>mở khoá dần theo từng ngày</strong> trong khu vực học viên — không mở hết một lần.</p>',
+    '</div>',
 
     '<div style="background:#f9f6f2;padding:16px 20px;margin:24px 0;font-size:14px">',
     '<strong>Bước tiếp theo:</strong><br>',
-    '1. Mở tài liệu và đọc phần Tuần 1<br>',
-    '2. Điền form check-in đầu tiên Quinn sẽ gửi riêng cho bạn<br>',
-    '3. Tham gia cộng đồng Telegram — link có trong tài liệu',
+    '<p style="margin:8px 0 0">1. Đăng nhập khu vực học viên bằng email và mật khẩu ở trên.</p>',
+    '<p>2. Xem video chào mừng, rồi bắt đầu Ngày 1.</p>',
+    zaloRow,
+    '<p>4. Mỗi ngày hoàn thành một bài; ngày tiếp theo mở vào sáng hôm sau.</p>',
     '</div>',
 
     '<p style="font-size:14px;color:#555">Có thắc mắc? Reply email này hoặc liên hệ <strong>' + esc(CONFIG.EMAIL_REPLY_TO) + '</strong></p>',
 
     '<p style="font-size:13px;color:#888;margin-top:32px;border-top:1px solid #eee;padding-top:16px">',
-    'Chuyển Mình · Shift Within · Quinn Nguyễn<br>',
+    '21 Ngày Hiểu Mình™ · Quinn Nguyễn<br>',
     esc(CONFIG.SITE_URL),
     '</p>',
 
@@ -354,21 +398,29 @@ function buildHtmlEmail(v) {
 }
 
 function buildPlainEmail(v) {
-  let txt = 'CHUYỂN MÌNH · SHIFT WITHIN\n\n';
+  let txt = '21 NGÀY HIỂU MÌNH\n\n';
   txt += 'Chào ' + v.name + ',\n\n';
-  txt += 'Thanh toán đã xác nhận. Chào mừng bạn đến với Hành Trình 8 Tuần Chuyển Mình!\n\n';
+  txt += 'Thanh toán đã xác nhận. Chào mừng bạn bắt đầu hành trình 21 Ngày Hiểu Mình!\n\n';
   txt += 'Mã đơn: ' + v.orderId + '\n';
   txt += 'Số tiền: ' + v.totalAmount + 'đ\n';
-  if (v.goal) txt += 'Tình trạng: ' + v.goal + '\n';
-  txt += '\nTÀI LIỆU KHOÁ HỌC\n' + CONFIG.EBOOK_URL + '\n\n';
-  if (v.hasBumps) {
-    txt += 'DỊCH VỤ ĐI KÈM\n';
-    if (v.bump1) txt += '• ' + CONFIG.BUMP1_NAME + ': Quinn sẽ liên hệ sắp lịch call trong 24h\n';
-    if (v.bump2) txt += '• ' + CONFIG.BUMP2_NAME + ': ' + CONFIG.BUMP2_URL + '\n';
-    txt += '\n';
-  }
-  txt += 'Liên hệ: ' + CONFIG.EMAIL_REPLY_TO + '\n\n';
-  txt += '—\nChuyển Mình · Shift Within · ' + CONFIG.SITE_URL + '\n';
+  if (v.goal) txt += 'Điều bạn đang gặp phải: ' + v.goal + '\n';
+  txt += '\nTHONG TIN DANG NHAP KHU VUC HOC VIEN\n';
+  txt += 'Trang hoc: ' + CONFIG.SITE_URL + '/khoahoc\n';
+  txt += 'Email: ' + v.email + '\n';
+  txt += 'Mat khau: ' + v.password + '\n';
+  txt += 'Luu lai email va mat khau nay de dang nhap lai bat cu luc nao.\n\n';
+  txt += 'VIDEO CHAO MUNG TU QUINN\n' + CONFIG.WELCOME_VIDEO_URL + '\n\n';
+  txt += 'VE CACH NOI DUNG DUOC GUI\n';
+  txt += 'Noi dung hanh trinh (video + sach bai tap tung Vong) se duoc mo khoa dan theo tung ngay trong khu vuc hoc vien.\n\n';
+  txt += 'BUOC TIEP THEO\n';
+  txt += '1. Dang nhap khu vuc hoc vien bang email va mat khau o tren.\n';
+  txt += '2. Xem video chao mung, roi bat dau Ngay 1.\n';
+  txt += v.hasZalo
+    ? '3. Tham gia cong dong Zalo kin: ' + CONFIG.ZALO_GROUP_URL + '\n'
+    : '3. Link cong dong Zalo kin se duoc gui rieng trong 24 gio.\n';
+  txt += '4. Moi ngay hoan thanh mot bai; ngay tiep theo mo vao sang hom sau.\n\n';
+  txt += 'Lien he: ' + CONFIG.EMAIL_REPLY_TO + '\n\n';
+  txt += '--\n21 Ngay Hieu Minh - ' + CONFIG.SITE_URL + '\n';
   return txt;
 }
 
@@ -381,6 +433,17 @@ function formatVnd(n) {
 
 function esc(s) {
   return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// Sinh mật khẩu 8 ký tự, bỏ các ký tự dễ nhầm (0/O, 1/I/L).
+function generatePassword(length) {
+  length = length || 8;
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let pwd = '';
+  for (let i = 0; i < length; i++) {
+    pwd += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return pwd;
 }
 
 function corsJson(obj) {
@@ -397,6 +460,7 @@ function doPost(e) {
     const body = JSON.parse(e.postData.contents || '{}');
     if (body.action === 'createOrder') return corsJson(createOrder(body.data || {}));
     if (body.action === 'updateOrder') return corsJson(updateOrder(body.orderId, body.data || {}));
+    if (body.action === 'verifyLogin') return corsJson(verifyLogin(body.email, body.password));
     if (body.content !== undefined && body.transferAmount !== undefined) {
       const key = (e.parameter && e.parameter.key) || '';
       if (key !== CONFIG.SEPAY_API_KEY) return corsJson({ success: false, error: 'Unauthorized' });
@@ -412,7 +476,7 @@ function doGet(e) {
   try {
     const action = (e.parameter && e.parameter.action) || '';
     if (action === 'getStatus') return corsJson(getStatus(e.parameter.orderId));
-    if (action === 'health') return corsJson({ success: true, message: 'Chuyen Minh backend running' });
+    if (action === 'health') return corsJson({ success: true, message: '21 Ngay Hieu Minh backend running' });
     return corsJson({ success: false, error: 'Unknown action' });
   } catch (err) {
     return corsJson({ success: false, error: err.toString() });
@@ -427,7 +491,7 @@ function testCreateOrder() {
     name: 'Test User',
     phone: '0901234567',
     email: CONFIG.EMAIL_REPLY_TO,
-    goal: 'Đã thử nhiều lần nhưng cứ bỏ cuộc',
+    goal: 'Đã bắt đầu nhiều lần nhưng vẫn bỏ cuộc',
     bump1: false,
     bump2: false,
     totalAmount: CONFIG.PRODUCT_PRICE
@@ -437,15 +501,20 @@ function testCreateOrder() {
 
 function testSendEmail() {
   sendConfirmationEmail({
-    orderId: 'CM-TEST001',
+    orderId: 'HM-TEST001',
     name: 'Quinn Test',
     email: CONFIG.EMAIL_REPLY_TO,
-    goal: 'Đã thử nhiều lần nhưng cứ bỏ cuộc',
+    goal: 'Đã bắt đầu nhiều lần nhưng vẫn bỏ cuộc',
     bump1: false,
     bump2: false,
-    totalAmount: CONFIG.PRODUCT_PRICE
+    totalAmount: CONFIG.PRODUCT_PRICE,
+    password: 'TEST1234'
   });
   Logger.log('Test email sent to ' + CONFIG.EMAIL_REPLY_TO);
+}
+
+function testVerifyLogin() {
+  Logger.log(JSON.stringify(verifyLogin(CONFIG.EMAIL_REPLY_TO, 'PASTE_PASSWORD_HERE'), null, 2));
 }
 
 function manualTriggerRow() {

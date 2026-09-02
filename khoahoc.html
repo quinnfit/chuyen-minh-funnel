@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>21 Ngày Hiểu Mình - Khu Vực Học Viên</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,600;1,700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   THEME - dong bo voi trang ban hang 21ngay-hieuminh.vercel.app
+   ============================================================ */
+:root {
+  --bg: #060D1A;
+  --surface: #0A1628;
+  --surface-2: #0D1E3A;
+  --border: rgba(212,184,150,0.20);
+  --radius: 8px;
+
+  --accent: #D4B896;
+  --accent-soft: rgba(212,184,150,0.12);
+  --blue: #1B9FE8;
+
+  --text: #FAFAFA;
+  --text-muted: rgba(250,250,250,0.60);
+
+  --font-h: 'Be Vietnam Pro', sans-serif;
+  --font-b: 'Be Vietnam Pro', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-b);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input { font-family: inherit; }
+
+h1, h2, h3, h4 {
+  font-family: var(--font-h);
+  line-height: 1.25;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* ============================================================
+   LOGIN SCREEN
+   ============================================================ */
+.login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: radial-gradient(ellipse at 70% 30%, var(--accent-soft) 0%, var(--bg) 65%);
+}
+.login-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 48px 40px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+}
+.login-brand { text-align: center; margin-bottom: 36px; }
+.login-brand .logo {
+  font-family: var(--font-h);
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 0.82rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.login-brand h1 { font-size: 1.6rem; margin-bottom: 8px; }
+.login-brand p { color: var(--text-muted); font-size: 0.95rem; }
+
+.login-form label {
+  display: block;
+  font-family: var(--font-h);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin: 18px 0 8px;
+}
+.login-form input {
+  width: 100%;
+  padding: 14px 18px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 0.98rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.login-form input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.login-btn {
+  width: 100%;
+  margin-top: 28px;
+  padding: 16px;
+  background: var(--accent);
+  color: #0A0A0A;
+  border-radius: 10px;
+  font-weight: 700;
+  font-family: var(--font-h);
+  font-size: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.login-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px var(--accent-soft); }
+.login-help { text-align: center; margin-top: 24px; font-size: 0.85rem; color: var(--text-muted); }
+.login-help a { color: var(--accent); text-decoration: underline; }
+.login-note {
+  margin-top: 20px; padding: 12px 14px;
+  background: var(--accent-soft); border: 1px dashed var(--border);
+  border-radius: 8px; font-size: 0.8rem; color: var(--text-muted); text-align: center;
+}
+.login-error {
+  background: rgba(200, 70, 70, 0.15);
+  border: 1px solid rgba(200, 70, 70, 0.4);
+  color: #E8A0A0;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-top: 16px;
+  font-size: 0.9rem;
+  display: none;
+}
+.login-error.show { display: block; }
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+.dashboard { display: none; min-height: 100vh; }
+.dashboard.active { display: grid; grid-template-rows: auto 1fr; }
+
+.top-bar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.top-bar-brand { display: flex; align-items: center; gap: 12px; }
+.top-bar-brand .logo {
+  font-family: var(--font-h);
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 0.74rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.top-bar-brand .divider { width: 1px; height: 20px; background: var(--border); }
+.top-bar-brand .label { font-size: 0.9rem; color: var(--text-muted); }
+.top-bar-user { display: flex; align-items: center; gap: 14px; }
+.user-info { text-align: right; }
+.user-info .name { font-size: 0.88rem; color: var(--text); font-weight: 600; }
+.user-info .email { font-size: 0.78rem; color: var(--text-muted); }
+.logout-btn {
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: border-color 0.2s, color 0.2s;
+}
+.logout-btn:hover { border-color: var(--accent); color: var(--accent); }
+.menu-toggle {
+  display: none;
+  padding: 8px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+}
+
+.dashboard-body { display: grid; grid-template-columns: 340px 1fr; min-height: calc(100vh - 64px); }
+@media (max-width: 960px) {
+  .dashboard-body { grid-template-columns: 1fr; }
+  .menu-toggle { display: block; }
+  .top-bar { padding: 12px 16px; }
+  .top-bar-brand .divider, .top-bar-brand .label { display: none; }
+  .top-bar-brand .logo { font-size: 0.66rem; }
+  .user-info { display: none; }
+}
+
+.sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 28px 20px 60px;
+  overflow-y: auto;
+  max-height: calc(100vh - 64px);
+  position: sticky;
+  top: 64px;
+}
+@media (max-width: 960px) {
+  .sidebar {
+    position: fixed; top: 64px; left: 0; bottom: 0;
+    width: 320px; transform: translateX(-100%);
+    transition: transform 0.3s; z-index: 40;
+  }
+  .sidebar.open { transform: translateX(0); }
+}
+.sidebar-title { font-family: var(--font-h); font-size: 0.74rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.sidebar-subtitle { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 20px; }
+.progress-wrap { margin-bottom: 26px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+.progress-bar { height: 6px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+.progress-bar span { display: block; height: 100%; background: var(--accent); width: 0; transition: width 0.4s; }
+.progress-text { font-size: 0.78rem; color: var(--text-muted); margin-top: 8px; }
+
+.module { margin-bottom: 26px; }
+.module-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; padding: 0 4px; }
+.module-num {
+  width: 30px; height: 30px;
+  background: var(--accent);
+  color: #0A0A0A;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-h); font-weight: 800; font-size: 0.9rem;
+  flex-shrink: 0;
+}
+.module-title { font-family: var(--font-h); font-size: 0.95rem; font-weight: 600; color: var(--text); line-height: 1.35; }
+.module-meta { font-size: 0.74rem; color: var(--accent); font-weight: 500; margin-top: 2px; }
+
+.lesson-list { padding-left: 0; }
+.lesson-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 12px; border-radius: 8px; margin-bottom: 2px;
+  cursor: pointer; transition: background 0.15s, color 0.15s;
+  color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;
+}
+.lesson-item:hover { background: var(--surface-2); color: var(--text); }
+.lesson-item.active {
+  background: var(--accent-soft); color: var(--accent);
+  border-left: 2px solid var(--accent); padding-left: 10px;
+}
+.lesson-item.locked { opacity: 0.4; cursor: not-allowed; }
+.lesson-item.locked:hover { background: transparent; color: var(--text-muted); }
+.lesson-num {
+  font-family: var(--font-h); font-weight: 600; font-size: 0.72rem;
+  color: var(--text-muted); background: var(--surface-2);
+  border-radius: 4px; padding: 2px 7px;
+  flex-shrink: 0; margin-top: 1px; min-width: 34px; text-align: center;
+}
+.lesson-item.active .lesson-num { background: var(--accent); color: #0A0A0A; }
+.lesson-flag { margin-left: auto; font-size: 0.82rem; flex-shrink: 0; color: var(--accent); }
+
+.main-content { padding: 40px clamp(20px, 4vw, 56px); max-width: 100%; overflow-x: hidden; }
+.lesson-breadcrumb { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 16px; }
+.lesson-breadcrumb .sep { margin: 0 8px; opacity: 0.5; }
+.lesson-breadcrumb .accent { color: var(--accent); }
+.lesson-header { margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+.lesson-header h1 { font-size: clamp(1.5rem, 3.5vw, 2.1rem); margin-bottom: 12px; }
+.lesson-header .meta { display: flex; gap: 18px; flex-wrap: wrap; font-size: 0.85rem; color: var(--text-muted); }
+.lesson-header .meta .accent { color: var(--accent); }
+
+.video-wrap {
+  position: relative; padding-bottom: 56.25%;
+  background: var(--surface-2);
+  border-radius: var(--radius); border: 1px solid var(--border);
+  overflow: hidden; margin-bottom: 32px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+}
+.video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.video-placeholder {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px; text-align: center; padding: 24px;
+  color: var(--text-muted);
+}
+.video-placeholder .ico { font-size: 2.4rem; opacity: 0.7; }
+.video-placeholder .t { font-family: var(--font-h); font-weight: 600; color: var(--text); font-size: 1rem; }
+.video-placeholder .s { font-size: 0.85rem; max-width: 380px; }
+
+.channel-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--accent-soft); color: var(--accent);
+  border: 1px solid var(--border); border-radius: 999px;
+  padding: 6px 14px; font-size: 0.8rem; font-weight: 600;
+  font-family: var(--font-h); margin-bottom: 26px;
+}
+
+.lesson-body h2 { font-size: 1.2rem; margin: 34px 0 14px; color: var(--accent); }
+.lesson-body h2:first-child { margin-top: 0; }
+.lesson-body p { color: var(--text-muted); line-height: 1.85; margin-bottom: 16px; font-size: 1rem; }
+.lesson-body ul { margin: 14px 0 20px; padding-left: 0; }
+.lesson-body ul li { position: relative; padding: 8px 0 8px 28px; color: var(--text); line-height: 1.7; font-size: 0.98rem; }
+.lesson-body ul li::before { content: "\2192"; position: absolute; left: 0; top: 8px; color: var(--accent); font-weight: 700; }
+
+.wb-note {
+  background: var(--accent-soft); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px 18px; margin: 10px 0 14px;
+  font-size: 0.92rem; color: var(--text-muted); line-height: 1.7;
+}
+.wb-note strong { color: var(--text); }
+
+.resource-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: 10px;
+  padding: 18px 20px; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 16px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.resource-card:hover { border-color: var(--accent); transform: translateX(4px); }
+.resource-icon {
+  width: 42px; height: 42px; background: var(--accent-soft);
+  border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0;
+}
+.resource-info { flex: 1; }
+.resource-info .title { font-family: var(--font-h); font-weight: 600; color: var(--text); font-size: 0.95rem; }
+.resource-info .desc { font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; }
+.resource-action { color: var(--accent); font-size: 0.85rem; font-weight: 600; font-family: var(--font-h); flex-shrink: 0; }
+
+.complete-row { margin-top: 44px; padding-top: 28px; border-top: 1px solid var(--border); }
+.complete-btn {
+  width: 100%; padding: 16px; border-radius: 10px;
+  background: var(--accent); color: #0A0A0A;
+  font-weight: 700; font-family: var(--font-h); font-size: 0.98rem;
+  transition: transform 0.15s;
+}
+.complete-btn:hover:not(:disabled) { transform: translateY(-2px); }
+.complete-btn.done { background: transparent; border: 1px solid var(--accent); color: var(--accent); cursor: default; }
+.complete-hint { text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 12px; }
+
+.lesson-nav { display: flex; justify-content: space-between; gap: 16px; margin-top: 32px; }
+.nav-btn { flex: 1; padding: 16px 20px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); transition: border-color 0.2s; text-align: left; }
+.nav-btn:hover:not(:disabled) { border-color: var(--accent); }
+.nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.nav-btn .label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; font-family: var(--font-h); font-weight: 600; }
+.nav-btn .title { font-family: var(--font-h); font-weight: 600; font-size: 0.92rem; color: var(--text); }
+.nav-btn.next { text-align: right; }
+
+.locked-panel { text-align: center; padding: 70px 20px; }
+.locked-panel .ico { font-size: 3rem; margin-bottom: 18px; }
+.locked-panel h2 { color: var(--text); margin-bottom: 12px; font-size: 1.4rem; }
+.locked-panel p { color: var(--text-muted); max-width: 460px; margin: 0 auto 8px; line-height: 1.8; }
+
+.menu-overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); z-index: 30; }
+.menu-overlay.show { display: block; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="logo">21 Ngày Hiểu Mình</div>
+      <h1>Khu vực học viên</h1>
+      <p>Đăng nhập để xem nội dung khóa học</p>
+    </div>
+    <form class="login-form" id="loginForm">
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="email@domain.com" required>
+      <label for="password">Mật khẩu</label>
+      <input type="password" id="password" placeholder="********" required>
+      <button type="submit" class="login-btn">Đăng nhập</button>
+      <div class="login-error" id="loginError">
+        Email hoặc mật khẩu không đúng. Vui lòng kiểm tra email xác nhận đơn hàng để lấy thông tin đăng nhập.
+      </div>
+    </form>
+    <div class="login-note" id="demoNote">
+      Đây là bản DEMO. Nhập email và mật khẩu bất kỳ để xem thử giao diện.
+    </div>
+    <p class="login-help">
+      Chưa có tài khoản? <a href="https://21ngay-hieuminh.vercel.app/dang-ky" target="_blank" rel="noopener">Đăng ký khóa học</a>
+    </p>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboard">
+  <div class="top-bar">
+    <div class="top-bar-brand">
+      <button class="menu-toggle" id="menuToggle">&#9776;</button>
+      <span class="logo">21 Ngày Hiểu Mình</span>
+      <span class="divider"></span>
+      <span class="label">Khu vực học viên</span>
+    </div>
+    <div class="top-bar-user">
+      <div class="user-info">
+        <div class="name" id="userName">Học viên</div>
+        <div class="email" id="userEmail">-</div>
+      </div>
+      <button class="logout-btn" id="logoutBtn">Đăng xuất</button>
+    </div>
+  </div>
+
+  <div class="dashboard-body">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-title">Khóa học</div>
+      <div class="sidebar-subtitle">21 Ngày Hiểu Mình&trade;</div>
+      <div class="progress-wrap">
+        <div class="progress-bar"><span id="progressFill"></span></div>
+        <div class="progress-text" id="progressText">0 / 22 ngày đã hoàn thành</div>
+      </div>
+
+      <div class="module">
+        <div class="module-header">
+          <div class="module-num">&#9733;</div>
+          <div>
+            <div class="module-title">Bắt đầu</div>
+            <div class="module-meta">Chào mừng</div>
+          </div>
+        </div>
+        <ul class="lesson-list">
+          <li class="lesson-item" data-lesson="d0"><span class="lesson-num">&#9733;</span> Video chào mừng</li>
+        </ul>
+      </div>
+
+      <div class="module">
+        <div class="module-header">
+          <div class="module-num">1</div>
+          <div>
+            <div class="module-title">Vòng 1 &middot; Nhìn Thấy</div>
+            <div class="module-meta">Ngày 1 - 7 &middot; Hiểu vòng lặp hành vi</div>
+          </div>
+        </div>
+        <ul class="lesson-list">
+          <li class="lesson-item" data-lesson="d1"><span class="lesson-num">N1</span> Các vòng lặp hành vi</li>
+          <li class="lesson-item" data-lesson="d2"><span class="lesson-num">N2</span> Vòng lặp cảm xúc</li>
+          <li class="lesson-item" data-lesson="d3"><span class="lesson-num">N3</span> Vòng lặp cầu toàn</li>
+          <li class="lesson-item" data-lesson="d4"><span class="lesson-num">N4</span> Nhìn lại thói quen hiện tại</li>
+          <li class="lesson-item" data-lesson="d5"><span class="lesson-num">N5</span> Vòng lặp động lực bên ngoài</li>
+          <li class="lesson-item" data-lesson="d6"><span class="lesson-num">N6</span> Niềm tin giới hạn + Bản đồ trigger</li>
+          <li class="lesson-item" data-lesson="d7"><span class="lesson-num">N7</span> Mini Checkpoint Vòng 1</li>
+        </ul>
+      </div>
+
+      <div class="module">
+        <div class="module-header">
+          <div class="module-num">2</div>
+          <div>
+            <div class="module-title">Vòng 2 &middot; Hiểu Cơ Thể</div>
+            <div class="module-meta">Ngày 8 - 14 &middot; Đọc cơ thể như một cuốn sách</div>
+          </div>
+        </div>
+        <ul class="lesson-list">
+          <li class="lesson-item" data-lesson="d8"><span class="lesson-num">N8</span> Tại sao phải ăn đủ và ăn đúng</li>
+          <li class="lesson-item" data-lesson="d9"><span class="lesson-num">N9</span> Tập luyện là một tín hiệu</li>
+          <li class="lesson-item" data-lesson="d10"><span class="lesson-num">N10</span> Giả thuyết đầu tiên về cơ thể mình</li>
+          <li class="lesson-item" data-lesson="d11"><span class="lesson-num">N11</span> Tracking không ám ảnh + Mở nhật ký</li>
+          <li class="lesson-item" data-lesson="d12"><span class="lesson-num">N12</span> Đọc hiểu cơn đói</li>
+          <li class="lesson-item" data-lesson="d13"><span class="lesson-num">N13</span> Khi bạn muốn nghỉ tập</li>
+          <li class="lesson-item" data-lesson="d14"><span class="lesson-num">N14</span> Mini Checkpoint Vòng 2</li>
+        </ul>
+      </div>
+
+      <div class="module">
+        <div class="module-header">
+          <div class="module-num">3</div>
+          <div>
+            <div class="module-title">Vòng 3 &middot; Hiểu Đích Đến</div>
+            <div class="module-meta">Ngày 15 - 21 &middot; Bắt đầu đúng cách</div>
+          </div>
+        </div>
+        <ul class="lesson-list">
+          <li class="lesson-item" data-lesson="d15"><span class="lesson-num">N15</span> Đích đến thật sự</li>
+          <li class="lesson-item" data-lesson="d16"><span class="lesson-num">N16</span> Điểm bắt đầu thật sự</li>
+          <li class="lesson-item" data-lesson="d17"><span class="lesson-num">N17</span> Tập luyện trong cuộc sống của tôi</li>
+          <li class="lesson-item" data-lesson="d18"><span class="lesson-num">N18</span> Rào cản thật sự + Thành công nhỏ</li>
+          <li class="lesson-item" data-lesson="d19"><span class="lesson-num">N19</span> Cách tôi muốn sống cùng cơ thể này</li>
+          <li class="lesson-item" data-lesson="d20"><span class="lesson-num">N20</span> Nhìn lại 3 vòng</li>
+          <li class="lesson-item" data-lesson="d21"><span class="lesson-num">N21</span> Tôi đã sẵn sàng</li>
+        </ul>
+      </div>
+    </aside>
+
+    <main class="main-content" id="mainContent"></main>
+  </div>
+</div>
+
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<script>
+/* ============================================================
+   HUONG DAN SUA NHANH
+   ------------------------------------------------------------
+   1) THEM / DOI VIDEO:
+      - Tai video len YouTube, dat che do "Khong cong khai" (Unlisted).
+      - Copy link, vi du https://www.youtube.com/watch?v=AbC123xyZ00
+      - Ma video la phan sau "v=" : AbC123xyZ00
+      - Tim bai tuong ung ben duoi, dien vao  videoId: "..."
+   2) DOI LINK SACH BAI TAP:
+      - Tim  wb: { ... id: "..." }  cua bai, thay id Google Docs moi vao.
+      - File Drive PHAI dat quyen chia se "Bat ky ai co duong lien ket - Nguoi xem".
+   3) MO KHOA GIUA CAC NGAY:
+      - Ngay sau chi mo khi: (a) da bam "hoan thanh" ngay truoc, VA (b) da sang ngay hom sau
+        (qua 00:00). Khong phai cho du 24 tieng.
+      - Muon TAT ngan cach ngay (mo het ngay lap tuc sau khi hoan thanh): dat  DRIP_ENABLED = false.
+      - De xem thu TAT CA cac ngay ma khong can dieu kien gi: mo file voi duoi  #preview
+        vi du  khoahoc.html#preview
+   ============================================================ */
+
+var DRIP_ENABLED = true;
+
+var DOC = 'https://docs.google.com/document/d/';
+var SHEET = 'https://docs.google.com/spreadsheets/d/';
+
+var LESSONS = {
+  d0: {
+    title: "Video chào mừng",
+    breadcrumb: ["Bắt đầu", "Chào mừng"],
+    duration: "3 - 5 phút",
+    channel: "Video",
+    hasVideo: true,
+    videoId: "bKBwa2P5Mk4",
+    intro: "Chào bạn. 21 ngày này không phải để giảm cân, không phải để ép mình vào một kế hoạch mới. Mục tiêu chỉ có một chữ: <em>hiểu</em>. Hiểu tại sao mình cứ bắt đầu rồi lại dừng, hiểu cơ thể mình đang cần gì, và hiểu mình thật sự muốn trở thành ai.",
+    sections: [
+      { h: "Hành trình đi qua 3 vòng", items: [
+        "Vòng 1, Nhìn Thấy: nhận ra những gì đang thực sự xảy ra mỗi lần mình sắp bỏ cuộc. Không phán xét, không tự trách.",
+        "Vòng 2, Hiểu: học cách đọc hiểu cơ thể mình và làm việc tốt với nó.",
+        "Vòng 3, Sẵn sàng: ghép tất cả thành một hệ thống của riêng mình, phù hợp với cuộc sống thật."
+      ]},
+      { h: "Cách học", items: [
+        "Mỗi ngày chỉ cần 15 đến 20 phút.",
+        "Có ngày xem video, có ngày làm sách bài tập, có ngày chỉ cần đọc một đoạn ngắn và quan sát bản thân.",
+        "Nội dung mở dần từng ngày. Xem xong một ngày và bấm \"đã hoàn thành\", ngày tiếp theo sẽ mở vào sáng hôm sau.",
+        "Không cần làm hoàn hảo. Chỉ cần quay lại mỗi ngày."
+      ]}
+    ]
+  },
+
+  d1: {
+    title: "Ngày 1: Các vòng lặp hành vi",
+    breadcrumb: ["Vòng 1", "Ngày 1"],
+    duration: "Video 8 - 10 phút",
+    channel: "Video &middot; Sách bài tập",
+    hasVideo: true,
+    videoId: "8Ys_T3s2ZT8",
+    wb: { t: "Sách 1, Phần 1: Quan sát không phán xét", id: "1IJIQ5DwDcXrZ9GX-fUDkLVERRUZUUxWVzR0ztfPV1K8" },
+    intro: "Lần gần nhất bạn bỏ cuộc một kế hoạch ăn uống hay tập luyện, lúc đó đang xảy ra chuyện gì? Thường câu trả lời không phải \"tôi lười\". Hãy tưởng tượng ý chí như pin điện thoại: sáng đầy 100%, đến tối cạn dần vì công việc, gia đình, cảm xúc, hàng chục quyết định lớn nhỏ. Và pin còn bị tiêu ngầm bởi những vòng lặp hành vi bạn chưa từng để ý.",
+    sections: [
+      { h: "4 loại vòng lặp phổ biến, như một bộ từ vựng chứ không phải nhãn dán", items: [
+        "Vòng lặp cảm xúc: ăn hoặc bỏ kế hoạch vì buồn, stress, cô đơn, mệt, chán.",
+        "Vòng lặp cầu toàn: phải đúng hoàn toàn; một việc lệch là \"hôm nay hỏng rồi\", rồi cả tuần bỏ cuộc.",
+        "Vòng lặp động lực bên ngoài: làm tốt khi có người nhắc, có deadline; hết người thúc thì dừng.",
+        "Vòng lặp niềm tin giới hạn: \"mình luôn bỏ cuộc\", \"mình không hợp tập luyện\"; tiêu pin ngay cả khi chưa bắt đầu."
+      ]},
+      { h: "Trong bài tập hôm nay bạn sẽ", items: [
+        "Ghi lại tuần vừa rồi có lúc nào muốn bỏ cuộc, lúc đó đang xảy ra chuyện gì xung quanh.",
+        "Trước khi ăn ngoài kế hoạch lần gần nhất, bạn đang cảm thấy thế nào.",
+        "Lý do thật khi bỏ một buổi tập (không phải lý do nói với người khác).",
+        "Trong 4 vòng lặp, cái nào nghe quen tai nhất. Viết một câu: \"Mình hay bỏ cuộc nhất khi...\""
+      ]},
+      { h: "Hành động Ngày 1", items: [
+        "Chọn 1 thói quen bất kỳ và duy trì nó trong 7 ngày tới. Ghi lại cảm xúc của bạn mỗi ngày để review lại vào Ngày 7. Xem hướng dẫn chi tiết trong sách bài tập."
+      ]}
+    ]
+  },
+
+  d2: {
+    title: "Ngày 2: Vòng lặp cảm xúc",
+    breadcrumb: ["Vòng 1", "Ngày 2"],
+    duration: "Video 1 - 2 phút",
+    channel: "Video",
+    hasVideo: true,
+    videoId: "aFaLn0VWx70",
+    intro: "Có bao giờ bạn mở tủ lạnh, hay mở app order đồ ăn, dù biết mình không thật sự đói? Không phải vì tham ăn hay thiếu kỷ luật. Mà vì hôm đó mệt, buồn, căng thẳng, hoặc trống rỗng. Lúc đó thức ăn trở thành cách nhanh nhất để não tìm cảm giác thả lỏng. Đó là vòng lặp cảm xúc.",
+    sections: [
+      { h: "Việc hôm nay", items: [
+        "Trước lần ăn ngoài bữa tiếp theo, dừng 10 giây và hỏi: mình đang đói trong cơ thể, hay mình đang cần thứ gì khác?",
+        "Không cần thay đổi câu trả lời. Chỉ cần nhận ra."
+      ]}
+    ]
+  },
+
+  d3: {
+    title: "Ngày 3: Vòng lặp cầu toàn",
+    breadcrumb: ["Vòng 1", "Ngày 3"],
+    duration: "Video 1 - 2 phút",
+    channel: "Video",
+    hasVideo: true,
+    videoId: "Unb5Vd-09kg",
+    intro: "Nhiều người không bỏ cuộc vì làm quá ít. Họ bỏ cuộc vì nghĩ mình phải làm hoàn hảo. Một bữa lệch kế hoạch dẫn tới \"hôm nay hỏng rồi\", rồi một ngày hỏng thành cả tuần bỏ cuộc. Sự thật: cơ thể không thay đổi nhờ những ngày hoàn hảo, mà nhờ những hành động đủ tốt được lặp lại.",
+    sections: [
+      { h: "Việc hôm nay", items: [
+        "Chọn 1 việc và làm nó ở mức 60 đến 70% thôi. Không tập được 45 phút thì đi bộ 15 phút. Không ăn đúng cả ngày thì giữ 1 bữa đủ chất.",
+        "Chưa hoàn hảo không có nghĩa là không có giá trị."
+      ]}
+    ]
+  },
+
+  d4: {
+    title: "Ngày 4: Nhìn lại thói quen hiện tại",
+    breadcrumb: ["Vòng 1", "Ngày 4"],
+    duration: "Sách bài tập",
+    channel: "Sách bài tập",
+    hasVideo: false,
+    videoId: "",
+    wb: { t: "Sách 1, Phần 2: Dữ liệu thật về cuộc sống của tôi", id: "1ankJXj_SIrNs4Zxj26qSz4OQ9BLvT5rsMUSboFCuEHw" },
+    intro: "Hôm nay không có bài học mới, và cũng không cần có. Ba ngày vừa rồi bạn đã bắt đầu nghe tên bốn vòng lặp. Trước khi đi tiếp, mình muốn bạn dừng lại một chút để nhìn cho rõ cách mình đang thực sự sống, chứ không phải cách mình nghĩ mình đang sống. Nghe thì đơn giản, nhưng phần lớn chúng ta chưa từng ngồi xuống viết ra một ngày bình thường của mình trông như thế nào: ăn mấy bữa, bữa nào dễ mất kiểm soát, khi mệt thì làm gì đầu tiên, ngủ bao nhiêu tiếng. Đây không phải bài kiểm tra. Đây là bước thu thập dữ liệu thật về chính mình, để những ngày sau bạn có cái để đối chiếu.",
+    sections: [
+      { h: "Trong bài tập hôm nay bạn sẽ ghi lại", items: [
+        "Một ngày bình thường của bạn từ sáng đến tối trông như thế nào.",
+        "Bạn thường ăn mấy bữa một ngày, bữa nào ít kiểm soát nhất.",
+        "Khi stress hoặc mệt, bạn thường làm gì đầu tiên.",
+        "Bạn ngủ bao nhiêu tiếng, chất lượng giấc ngủ ra sao.",
+        "Điều gì trong nhịp sống hiện tại khiến bạn khó thay đổi nhất.",
+        "Lần bạn từng duy trì được một thói quen tốt, điều gì đã giúp bạn làm được."
+      ]},
+      { h: "Nhắc nhỏ", items: [
+        "Viết điều đang thực sự diễn ra, không phải điều bạn muốn xảy ra. Không cần câu trả lời đẹp."
+      ]}
+    ]
+  },
+
+  d5: {
+    title: "Ngày 5: Vòng lặp động lực bên ngoài",
+    breadcrumb: ["Vòng 1", "Ngày 5"],
+    duration: "Video 1 - 2 phút",
+    channel: "Video",
+    hasVideo: true,
+    videoId: "oK4zaUSXL-U",
+    intro: "Bạn làm rất tốt khi có người đi cùng, có HLV nhắc, có nhóm thử thách, có sự kiện sắp đến. Nhưng khi những thứ đó biến mất, mọi thứ cũng dừng. Đây là vòng lặp động lực bên ngoài: nó cần nguồn điện từ ngoài. Động lực bên ngoài giúp bạn bắt đầu thì tốt, vấn đề chỉ là khi đó là nguồn duy nhất.",
+    sections: [
+      { h: "Việc hôm nay", items: [
+        "Chọn 1 hành động và làm nó dù không ai biết. Không đăng lên nhóm, không chụp ảnh, không cần ai khen.",
+        "Có thể chỉ là đi bộ 15 phút, một bữa có protein, một cốc nước thêm, ngủ sớm hơn 15 phút.",
+        "Làm xong, tự nói: \"Mình làm điều này vì mình muốn chăm sóc bản thân.\""
+      ]}
+    ]
+  },
+
+  d6: {
+    title: "Ngày 6: Niềm tin giới hạn + Bản đồ trigger",
+    breadcrumb: ["Vòng 1", "Ngày 6"],
+    duration: "Video 1 - 2 phút",
+    channel: "Video &middot; Sách bài tập",
+    hasVideo: true,
+    videoId: "UAUO-aExS78",
+    wb: { t: "Sách 1, Phần 3: Bản đồ trigger cá nhân", id: "1ZpG3NcWVsx-JxVTBUDeS8eoo4qzGW3ieemo1q39eO78" },
+    intro: "Vòng lặp thứ tư, và khó nhìn thấy nhất, không nằm ở hành vi mà ở điều bạn tin về chính mình: \"Mình không có thời gian\", \"Mình luôn bỏ cuộc\". Khi lặp lại đủ nhiều, não xem đó là sự thật. Hôm nay bạn sẽ vẽ bản đồ trigger cá nhân để nhìn thấy chuỗi: tình huống, cảm xúc, suy nghĩ, hành động.",
+    sections: [
+      { h: "Trong bài tập hôm nay bạn sẽ", items: [
+        "Ghi lại 2 đến 3 chuỗi phản ứng hay xảy ra nhất theo mẫu: Tình huống, Cảm xúc, Suy nghĩ bật lên, Hành động thường làm, Tần suất.",
+        "Trigger xuất hiện nhiều nhất trong cuộc sống của bạn là gì.",
+        "Cảm xúc nào khó xử lý nhất.",
+        "Trong 4 vòng lặp đã học, cái nào chạy ngầm mà bạn ít nhận ra nhất."
+      ]}
+    ]
+  },
+
+  d7: {
+    title: "Ngày 7: Mini Checkpoint Vòng 1",
+    breadcrumb: ["Vòng 1", "Ngày 7"],
+    duration: "Mini Checkpoint",
+    channel: "Mini Checkpoint",
+    hasVideo: false,
+    videoId: "",
+    wb: { t: "Mini Checkpoint Vòng 1", id: "1CB7ICKPsDPgVLxqNUndeuf5_JdyyWILBATu9ugyxg4w" },
+    intro: "Đây là điểm dừng đầu tiên. Bảy ngày vừa rồi bạn không học để \"làm tốt\", bạn học để quan sát. Và việc bạn dừng lại, nhìn ra được những gì đang thực sự xảy ra với mình, đó không phải điều ai cũng làm được. Nhiều người tập nhiều năm mà chưa bao giờ làm việc này. Hôm nay bạn chưa cần nhận ra hết mọi thứ, chưa cần câu trả lời rõ ràng. Chỉ cần nhìn thấy, dù còn mơ hồ, là đủ để bước sang Vòng 2, nơi chúng ta chuyển sự chú ý sang cơ thể.",
+    sections: [
+      { h: "Trong Mini Checkpoint, bạn nhìn lại", items: [
+        "Trong 7 ngày qua, bạn nhận ra điều gì về bản thân mà trước đây chưa để ý.",
+        "Trigger nào hay xuất hiện nhất, và thường vào lúc nào.",
+        "Lần nào trong tuần bạn cảm thấy \"pin cạn\" rõ nhất, lúc đó đang xảy ra chuyện gì.",
+        "Bạn đã thử hành động nhỏ nào, cảm giác thế nào.",
+        "Bạn muốn mang theo điều gì sang Vòng 2."
+      ]},
+      { h: "Cột mốc: NGƯỜI QUAN SÁT", items: [
+        "\"Bạn chưa cần thay đổi mọi thứ. Bạn đã bắt đầu nhìn thấy bản thân.\""
+      ]}
+    ]
+  },
+
+  d8: {
+    title: "Ngày 8: Tại sao phải ăn đủ và ăn đúng",
+    breadcrumb: ["Vòng 2", "Ngày 8"],
+    duration: "Video 7 - 9 phút",
+    channel: "Video &middot; Sách bài tập",
+    hasVideo: true,
+    videoId: "xMLuyVsMayg",
+    wb: { t: "Sách 2, Phần 1: Tôi đang ăn gì và cơ thể phản hồi ra sao?", id: "1s2NBlAKEJPcnV_oJxXB9oEfvXJSliCO9XfH-BDwZbbo" },
+    intro: "Bây giờ nhìn vào chính cơ thể bạn. Cốt lõi của mọi chế độ ăn là TDEE, tổng năng lượng cơ thể tiêu hao trong ngày. Ăn ít hơn TDEE thì giảm cân, ăn đủ thì giữ cân, ăn nhiều hơn thì tăng cân. Nhưng quá ít hoặc quá nhiều đều khiến kết quả đi lệch mục tiêu.",
+    sections: [
+      { h: "3 nhóm đa lượng quan trọng", items: [
+        "Protein: xây dựng và duy trì cơ, hỗ trợ phục hồi, tạo cảm giác no. Nhóm quan trọng nhất khi muốn đổi vóc dáng, và cũng là nhóm hầu hết mọi người đang ăn thiếu nhất.",
+        "Carbohydrate: nguồn năng lượng cho hoạt động thể chất và phục hồi. Carb không phải kẻ thù.",
+        "Chất béo: cần cho hormone và hấp thu vitamin tan trong dầu. Không phải nhóm cần loại bỏ."
+      ]},
+      { h: "Điều muốn bạn nhớ nhất", items: [
+        "Muốn thay đổi cơ thể, đừng hỏi \"mình có thể ép nó đến đâu\", hãy học xem nó cần gì.",
+        "Nhiều khi thứ bạn gọi là \"mình thiếu kỷ luật\" chỉ là một kế hoạch đang đòi hỏi cơ thể quá nhiều."
+      ]},
+      { h: "Trong bài tập hôm nay bạn sẽ", items: [
+        "Ghi lại 3 bữa ăn điển hình trong tuần (sáng, trưa, tối).",
+        "Nhìn từng bữa, nhóm chất nào đang thiếu nhất.",
+        "Bữa nào giúp no lâu và có năng lượng nhất, bữa đó có gì.",
+        "Bữa nào hay mất kiểm soát nhất, bữa đó thiếu gì.",
+        "Điều gì khiến bạn bất ngờ khi nhìn lại cách mình đang ăn."
+      ]},
+      { h: "Hành động tối thiểu hôm nay", items: [
+        "Ăn ít nhất 1 bữa có nguồn protein rõ ràng."
+      ]}
+    ]
+  },
+
+  d9: {
+    title: "Ngày 9: Tập luyện là một tín hiệu",
+    breadcrumb: ["Vòng 2", "Ngày 9"],
+    duration: "Video 10 - 12 phút",
+    channel: "Video",
+    hasVideo: true,
+    videoId: "4tq3dhTIUR8",
+    intro: "Hôm qua nói về nguyên liệu. Hôm nay là tín hiệu: qua tập luyện, bạn gửi cho cơ thể lời nhắn \"hãy thay đổi để thích nghi với điều này\". Ba biến số không cái nào là phần phụ: Ăn cung cấp nguyên liệu, Tập cung cấp tín hiệu, Nghỉ cho cơ thể cơ hội đáp ứng.",
+    sections: [
+      { h: "Các loại tín hiệu", items: [
+        "Kháng lực (tạ, calisthenics, Pilates hoặc Yoga đủ nặng): tín hiệu \"vùng này cần mạnh hơn\", giúp xây và giữ cơ, đặc biệt quan trọng khi muốn đổi vóc dáng.",
+        "Cardio (chạy, bơi, đạp xe, đi bộ nhanh): tín hiệu \"duy trì hoạt động này tốt hơn\", tốt cho tim mạch, sức bền, tâm trạng, giấc ngủ. Cardio không phải hình phạt cho những gì bạn đã ăn.",
+        "Vận động nền: đi bộ, leo cầu thang, việc nhà. Cộng lại cả ngày là phần đáng kể trong tổng vận động."
+      ]},
+      { h: "Tăng tiến và nghỉ ngơi", items: [
+        "Tăng tiến tốt là tăng tiến mà cơ thể bạn có khả năng đáp ứng, không phải tuần nào cũng nâng nặng hơn.",
+        "Nghỉ ngơi không phải lười biếng. Nghỉ ngơi là một phần của quá trình thích nghi."
+      ]},
+      { h: "Hành động hôm nay", items: [
+        "Nghĩ lại tuần vừa rồi: sau những buổi tập, bạn thường thấy tốt hơn, vừa đủ mệt, hay kiệt sức? Chỉ cần ghi nhận."
+      ]}
+    ]
+  },
+
+  d10: {
+    title: "Ngày 10: Giả thuyết đầu tiên về cơ thể mình",
+    breadcrumb: ["Vòng 2", "Ngày 10"],
+    duration: "Video 2 - 3 phút",
+    channel: "Video &middot; Sách bài tập",
+    hasVideo: true,
+    videoId: "R2rfuw6egNk",
+    wb: { t: "Sách 2, Phần 2: Giả thuyết đầu tiên về cơ thể mình", id: "1BMTF6mxWX5V9fMBGi3iiTfKP3yiomN4ATLa5StP9q2A" },
+    intro: "Hôm nay bạn tạo giả thuyết đầu tiên về cách làm việc với cơ thể mình. Đây không phải đáp án tuyệt đối: TDEE là giả thuyết, lượng ăn là giả thuyết, định hướng tập là giả thuyết. Bạn chỉ cần một điểm bắt đầu đủ hợp lý để có thứ mà quan sát.",
+    sections: [
+      { h: "3 điều cần nhớ khi làm bài", items: [
+        "TDEE calculator chỉ cho bạn một điểm bắt đầu. Phản hồi của cơ thể trong vài tuần tới mới cho biết con số đó phù hợp hay cần chỉnh.",
+        "Tính mức vận động thật, không phải mức bạn mong muốn. Nhìn cả tuần: ngồi nhiều hay đi nhiều, trung bình bao nhiêu bước, tập mấy buổi.",
+        "Điều bạn muốn chưa chắc là điều cơ thể đang cần. Có người thấy mình \"béo\" nhưng vấn đề lớn hơn lại là khối cơ còn quá ít."
+      ]},
+      { h: "Trong bài tập hôm nay bạn sẽ", items: [
+        "Tìm TDEE ước tính bằng công cụ tính (nhập tuổi, chiều cao, cân nặng, mức vận động thật).",
+        "Ghi lại điểm xuất phát: cân nặng, số đo eo, bụng, mông, xu hướng cân 6 đến 12 tháng, lịch sử tập kháng lực.",
+        "Chọn hướng ưu tiên ban đầu: Giảm mỡ, Recomposition, Tăng cân và xây cơ, hoặc chưa chắc thì gửi Quinn hỗ trợ.",
+        "Chốt giả thuyết đầu tiên: TDEE ước tính, lượng ăn khởi điểm, protein khởi điểm (khoảng 1.6 đến 2.0 g trên kg cân nặng), hướng ưu tiên."
+      ]}
+    ],
+    resources: [
+      { icon: "&#129518;", title: "Công cụ tính TDEE", desc: "Nhập tuổi, chiều cao, cân nặng, mức vận động để có con số khởi điểm", action: "Mở", url: "https://21ngay-hieuminh.vercel.app/tdee" },
+      { icon: "&#127873;", title: "Quà tặng: Cơm nhà vẫn vào form", desc: "Ăn cơm Việt bình thường mà vẫn đủ protein và năng lượng", action: "Mở", url: "https://docs.google.com/document/d/1meiCBNt9fgXD60TvbVyKmA-WL4zDrJQC/edit" }
+    ]
+  },
+
+  d11: {
+    title: "Ngày 11: Tracking không ám ảnh + Mở nhật ký",
+    breadcrumb: ["Vòng 2", "Ngày 11"],
+    duration: "Video ngắn",
+    channel: "Video &middot; Sách bài tập",
+    hasVideo: true,
+    videoId: "QTaSemk5LRI",
+    wb: { t: "Template Nhật ký Hiểu Mình", id: "1DMFIQICWzW0FEZW1n3wY0BdaQH2_zfn-GOlEtqLZbR8", sheet: true },
+    intro: "Hôm qua bạn tạo giả thuyết đầu tiên. Hôm nay bắt đầu thu thập dữ liệu để kiểm tra nó. Công cụ: app tracking thực phẩm. Tracking không phải để kiểm soát từng miếng ăn, mà để quan sát: mình đang ăn bao nhiêu, thiếu nhóm chất nào, khi nào hay ăn theo cảm xúc, món nào giúp no lâu.",
+    sections: [
+      { h: "Cách dùng app tracking", items: [
+        "Nhập TDEE mục tiêu đã tính ở Ngày 10 vào phần cài đặt của app.",
+        "Không cần nhập chính xác 100%. Ước lượng là được, miễn nhất quán. Dữ liệu tương đối mà đều đặn có giá trị hơn dữ liệu chính xác vài ngày rồi bỏ.",
+        "Nếu app khiến bạn ám ảnh với từng con số, đó là dấu hiệu đang dùng sai mục đích. Mở app để quan sát, không phải để phán xét."
+      ]}
+    ],
+    resources: [
+      { icon: "&#128241;", title: "WAO", desc: "App tracking thực phẩm, database món Việt", action: "Mở", url: "https://wao.vn/" },
+      { icon: "&#128241;", title: "Yazio", desc: "App tracking thực phẩm", action: "Mở", url: "https://www.yazio.com/en" },
+      { icon: "&#128241;", title: "Caloer", desc: "App tính calo (iOS)", action: "Mở", url: "https://apps.apple.com/vn/app/caloer-t%C3%ADnh-calo-gi%E1%BA%A3m-c%C3%A2n/id6474173293" }
+    ]
+  },
+
+  d12: {
+    title: "Ngày 12: Đọc hiểu cơn đói",
+    breadcrumb: ["Vòng 2", "Ngày 12"],
+    duration: "Video ngắn",
+    channel: "Video &middot; Sách bài tập",
+    hasVideo: true,
+    videoId: "H35omaDlpDY",
+    wb: { t: "Sách 2, Phần 3: Đọc tín hiệu đói", id: "1hUVXwMV49Fo1vl6mZ8ibE4Vk0hnAOFPlVj8aBbVbGrQ" },
+    intro: "Nhớ vòng lặp cảm xúc ở Ngày 2 chứ? Không phải lúc nào chúng ta ăn cũng vì cơ thể thiếu năng lượng. Đôi khi mình đang tìm sự thoải mái, một phần thưởng, một cách xoa dịu cảm xúc. Hôm nay rèn khả năng dừng lại đủ lâu trước khi hành động, để nhìn rõ: \"Lúc này, mình thực sự đang cần điều gì?\"",
+    sections: [
+      { h: "Phân biệt tín hiệu", items: [
+        "Đói sinh lý: bụng rỗng, năng lượng giảm, khó tập trung, cảm giác đói tăng dần theo thời gian.",
+        "Đói cảm xúc: liên hệ rõ với một trạng thái hoặc tình huống, như stress, buồn, chán, cô đơn, mệt, hoặc thấy món ăn hấp dẫn.",
+        "Đừng cố phân loại mọi cơn đói thành đúng hay sai, và đừng tự trách. Chỉ cần hiểu. Chưa cần sửa."
+      ]},
+      { h: "Trong bài tập hôm nay bạn sẽ", items: [
+        "Trước 3 lần ăn bất kỳ, dừng lại khoảng 30 giây. Không cố ăn ít hơn, không ngăn mình ăn, chỉ quan sát.",
+        "Mỗi lần ghi: cơ thể đang có tín hiệu gì, ngay trước khi muốn ăn mình cảm thấy thế nào, mình đang muốn ăn nói chung hay một món cụ thể hay một cảm giác dễ chịu.",
+        "Hoàn thành câu: \"Có thể mình đang cần ...\"",
+        "Cuối ngày: 3 lần ăn có điểm gì giống nhau, sau hôm nay mình hiểu thêm điều gì về cách mình ăn."
+      ]}
+    ]
+  },
+
+  d13: {
+    title: "Ngày 13: Khi bạn muốn nghỉ tập",
+    breadcrumb: ["Vòng 2", "Ngày 13"],
+    duration: "Video ngắn",
+    channel: "Video &middot; Sách bài tập",
+    hasVideo: true,
+    videoId: "Zsi4-cyCAsw",
+    wb: { t: "Sách 2, Phần 4: Khi bạn muốn nghỉ tập", id: "1zfaPdNqDsa6YkQqhc-I_KcpMD1VZPl5iLANc2mNxz7s" },
+    intro: "Có những ngày bạn nhìn lịch tập và chỉ nghĩ \"hôm nay mình không muốn tập\". Thay vì hỏi \"nên cố hay nghỉ\", hãy hỏi \"hôm nay mình có khả năng đáp ứng đến đâu\". Nghỉ một ngày có chủ đích không giống bỏ cuộc.",
+    sections: [
+      { h: "Quy tắc 10 phút", items: [
+        "Nếu không có dấu hiệu bất thường và vấn đề chủ yếu là không muốn bắt đầu: thử 10 phút vận động nhẹ hoặc warm-up, rồi check lại cơ thể.",
+        "Sau 10 phút, bạn có thể chọn: tập tiếp đầy đủ, tập phiên bản điều chỉnh (giảm tạ, giảm set, rút ngắn), hoặc nghỉ có chủ đích.",
+        "Một buổi tập 20 phút không phải buổi tập thất bại chỉ vì lịch ghi 60 phút."
+      ]},
+      { h: "Trong bài tập hôm nay bạn sẽ", items: [
+        "Check-in tâm lý (có hứng, bình thường, chán, stress) và cơ thể (bình thường, hơi mỏi, nặng nề, thiếu ngủ, hiệu suất giảm, đau bất thường).",
+        "Nếu chưa chắc thì thử 10 phút, rồi ghi lại thấy ổn hơn, không đổi, hay tệ hơn.",
+        "Hôm nay mình chọn: tập như kế hoạch, tập phiên bản điều chỉnh, hay nghỉ có chủ đích.",
+        "Hoàn thành câu: \"Những ngày không muốn tập, thay vì bỏ ngay, mình sẽ ... trước.\""
+      ]}
+    ]
+  },
+
+  d14: {
+    title: "Ngày 14: Mini Checkpoint Vòng 2",
+    breadcrumb: ["Vòng 2", "Ngày 14"],
+    duration: "Mini Checkpoint",
+    channel: "Mini Checkpoint &middot; Sách bài tập",
+    hasVideo: false,
+    videoId: "",
+    wb: { t: "Mini Checkpoint Vòng 2 (gồm Nhật ký tuần)", id: "1i9lIofTLv_U_SjZ-rGn5GDnbwEtK8JNMULTVAOFEy44" },
+    intro: "Bảy ngày của Vòng 2, bạn đã quan sát cơ thể qua ba việc: ăn, tập, nghỉ. Hôm nay ghép những manh mối đó lại với nhau. Đây không phải bài kiểm tra xem bạn ăn có đúng chưa hay tập đủ chưa. Mục tiêu là bạn tự nhìn ra một vài mối liên hệ, ví dụ ngủ ít thì mệt và thèm ngọt hơn, hoặc ăn đủ trước buổi tập thì tối ít thèm ăn hơn. Chỉ cần một hai kết nối như vậy là bạn đã có thứ để mang sang Vòng 3.",
+    sections: [
+      { h: "Trong Mini Checkpoint bạn nhìn lại", items: [
+        "Manh mối lớn nhất bạn nhận ra về cơ thể mình tuần này là gì.",
+        "Pattern nào trong cách ăn, cảm giác đói, hoặc cravings.",
+        "Bạn nhận thấy điều gì về khả năng tập luyện và phục hồi (giấc ngủ, năng lượng).",
+        "Giả thuyết ban đầu (TDEE, lượng ăn, định hướng) có điều gì khiến bạn chưa chắc chắn không.",
+        "Nếu chỉ chọn MỘT thứ muốn tiếp tục quan sát tuần tới, bạn chọn gì."
+      ]},
+      { h: "Cột mốc: NGƯỜI THẤU HIỂU", items: [
+        "\"Cơ thể đang nói chuyện với bạn mỗi ngày. Bạn đã bắt đầu nghe.\""
+      ]}
+    ]
+  },
+
+  d15: {
+    title: "Ngày 15: Đích đến thật sự",
+    breadcrumb: ["Vòng 3", "Ngày 15"],
+    duration: "Video 8 - 10 phút",
+    channel: "Video &middot; Sách bài tập",
+    hasVideo: true,
+    videoId: "ZL7vrFJD-gw",
+    wb: { t: "Sách 3, Phần 1: Điều tôi thực sự muốn từ tập luyện", id: "1Vc_AEDYD_tejO1IS8lfQulaPIKfmnW61hrt_A8xDVNw" },
+    intro: "Chào mừng bạn đến Vòng 3. Hai tuần qua bạn đã có hai nguồn thông tin: cách mình phản ứng (Vòng 1) và cách cơ thể mình phản hồi (Vòng 2). Vòng 3 dùng cả hai để trả lời một câu hỏi khác: mình đang dùng tất cả những điều này để đi đâu? Trước khi hỏi \"mình nên tập thế nào\", có một câu hỏi đến trước: mình thực sự muốn nhận được gì từ việc chăm sóc cơ thể này?",
+    sections: [
+      { h: "Kết quả mình muốn và mức đầu tư mình chọn", items: [
+        "Mỗi kết quả đều đi kèm một mức đầu tư nhất định. Vấn đề xuất hiện khi khoảng cách giữa kết quả kỳ vọng và mức đầu tư bạn thực sự sẵn sàng quá lớn.",
+        "Bạn có thể rất muốn một vóc dáng cực lean (mong muốn 10 trên 10), nhưng nhìn vào những gì nó đòi hỏi, bạn nhận ra hiện tại mình chỉ sẵn sàng 5 trên 10. Điều đó không có nghĩa bạn thiếu kỷ luật, cũng không có nghĩa mục tiêu sai.",
+        "Khi thấy khoảng cách đó, bạn có thêm lựa chọn: đổi mục tiêu, cho bản thân nhiều thời gian hơn, điều chỉnh kỳ vọng, hoặc chủ động dành thêm nguồn lực. Hai thứ chỉ cần khớp với nhau."
+      ]},
+      { h: "Fitness có vị trí nào trong cuộc sống của mình", items: [
+        "Câu hỏi không phải \"fitness nên quan trọng đến mức nào\" mà \"bạn muốn nó quan trọng đến mức nào ở giai đoạn hiện tại\".",
+        "Tập luyện cần làm được điều gì cho cuộc sống của bạn: tự tin hơn, đủ khỏe để đi du lịch hay chơi với con, cảm giác tiến bộ trong phòng tập, vóc dáng, hay đơn giản là khoảng thời gian dành riêng cho mình.",
+        "Nếu mọi mục tiêu đều 10 trên 10, kế hoạch dễ thành một danh sách vô tận những điều \"phải\" làm. Một đích đến rõ thường cần một thứ tự ưu tiên."
+      ]},
+      { h: "Trong bài tập hôm nay bạn sẽ", items: [
+        "Nhìn vào 5 nhóm kết quả bạn có thể muốn: vóc dáng; sức khỏe và năng lượng; khả năng của cơ thể; mối quan hệ với cơ thể; con người bạn muốn xây dựng qua quá trình này.",
+        "Chấm điểm mức độ mong muốn và mức đầu tư bạn thực sự sẵn sàng dành cho từng nhóm.",
+        "Những điều bạn không muốn thường xuyên phải đánh đổi (bữa ăn gia đình, giấc ngủ, công việc, đời sống xã hội, sự linh hoạt).",
+        "Vị trí bạn muốn fitness có trong cuộc sống ở giai đoạn hiện tại, và mình muốn cảm thấy thế nào khi sống trong cơ thể đó."
+      ]}
+    ]
+  },
+
+  d16: {
+    title: "Ngày 16: Điểm bắt đầu thật sự",
+    breadcrumb: ["Vòng 3", "Ngày 16"],
+    duration: "Sách bài tập",
+    channel: "Sách bài tập",
+    hasVideo: false,
+    videoId: "",
+    wb: { t: "Sách 3, Phần 2: Mình đang bắt đầu từ đâu", id: "1Nf3B2vHVWVafLA7xgVlCk_b3LREnO-cz_Gj-zLbMtxQ" },
+    intro: "Hôm qua, bạn đã dành thời gian để nhìn rõ hơn điều mình thực sự muốn từ việc tập luyện. Hôm nay, chúng ta quay về với điểm bắt đầu: cuộc sống mà bạn đang thực sự sống. Hãy dành một chút thời gian nhìn lại quỹ thời gian, năng lượng, nhịp sinh hoạt và cách việc chăm sóc cơ thể đang hiện diện trong cuộc sống của mình. Không cần trả lời theo một phiên bản lý tưởng. Càng thành thật với thực tế hiện tại, bạn càng có một điểm bắt đầu phù hợp cho những bước tiếp theo.",
+    sections: [
+      { h: "Trong bài tập hôm nay bạn sẽ nhìn vào", items: [
+        "Cơ thể mình đang ở đâu: điều mình hài lòng nhất, điều muốn cải thiện nhất, và điều cơ thể hiện tại đang làm được mà mình thường quên công nhận.",
+        "Thói quen mình đang ở đâu: thói quen đang làm khá tốt, thói quen chưa ổn định, và điều mình từng nghĩ là \"không có kỷ luật\" nhưng sau 2 tuần quan sát lại thấy nguyên nhân khác.",
+        "Tâm lý mình đang ở đâu: vòng lặp dễ rơi vào nhất, trigger thường kích hoạt, phản ứng quen thuộc khi mọi thứ không theo kế hoạch.",
+        "Cuộc sống mình đang ở đâu: điều gì đang giúp mình, điều gì đang khiến việc chăm sóc bản thân khó hơn.",
+        "Khoảng cách còn tồn tại giữa đích đến (Ngày 15) và thực tế hiện tại."
+      ]}
+    ]
+  },
+
+  d17: {
+    title: "Ngày 17: Tập luyện trong cuộc sống của tôi",
+    breadcrumb: ["Vòng 3", "Ngày 17"],
+    duration: "Sách bài tập",
+    channel: "Sách bài tập",
+    hasVideo: false,
+    videoId: "",
+    wb: { t: "Sách 3, Phần 3: Tập luyện sẽ nằm ở đâu trong tuần của mình?", id: "1pXyWf-9b-Hw3k0pGLGzVIcqT2ZucIv6yWG3q7x8hPwk" },
+    intro: "Hôm nay, chúng ta thử tìm giao điểm giữa hai điều: điều bạn muốn và cuộc sống bạn thực sự có. Thay vì đi tìm một lịch tập \"tốt nhất\", hãy thử xác định một cách tập luyện phù hợp với bạn cần đáp ứng những điều kiện gì để có thể tồn tại lâu dài. Cuối bài có phần AI Mirror để bạn tham khảo một vài cách tổ chức và những đánh đổi đi kèm. Hãy hoàn thành phần của mình trước khi dùng AI. AI có thể giúp bạn nhìn thêm các lựa chọn, nhưng quyết định cuối cùng vẫn thuộc về bạn.",
+    sections: [
+      { h: "Trong bài tập hôm nay bạn sẽ", items: [
+        "Nhìn vào một tuần thật của mình, tìm những khoảng thời gian thực sự khả thi để tập.",
+        "Xác định một cách tập luyện phù hợp cần đáp ứng những điều kiện gì để duy trì được lâu dài.",
+        "Tạo một lịch tập thử nghiệm: không phải lịch hoàn hảo, không phải lịch theo mãi mãi, chỉ đủ hợp lý để mang vào cuộc sống thật và bắt đầu thử.",
+        "AI Mirror: sau khi tự làm xong, có thể dùng AI để kiểm tra mục tiêu, kỳ vọng, nguồn lực và lịch có đang khớp nhau không, có điểm nào mình chưa nhìn thấy không."
+      ]}
+    ]
+  },
+
+  d18: {
+    title: "Ngày 18: Rào cản thật sự + Thành công nhỏ",
+    breadcrumb: ["Vòng 3", "Ngày 18"],
+    duration: "Sách bài tập",
+    channel: "Sách bài tập",
+    hasVideo: false,
+    videoId: "",
+    wb: { t: "Sách 3, Phần 4: Biết trước để không bị bất ngờ", id: "1RCq2F5urRqq9zGemGo4CgPcOtGA6zpRFbKl5wu84-Fw" },
+    intro: "Một kế hoạch phù hợp không có nghĩa mọi tuần sau đó đều diễn ra đúng như dự tính. Sẽ vẫn có những ngày bận, mệt, thay đổi lịch trình, hoặc đơn giản là bạn không ở trạng thái tốt nhất. Bài hôm nay giúp bạn nhìn trước một vài tình huống có khả năng xảy ra, nhận ra phản ứng quen thuộc của mình và thử nghĩ về một lựa chọn khác cho lần tới. Đồng thời, hãy để ý đến những dấu hiệu tiến bộ nhỏ, bởi đôi khi cách bạn phản ứng đã bắt đầu thay đổi trước cả khi kết quả xuất hiện trên cân, số đo hay trong gương.",
+    sections: [
+      { h: "Trong bài tập hôm nay bạn sẽ", items: [
+        "Viết ra 3 tình huống thật có khả năng làm xáo trộn kế hoạch (không viết chung chung như \"thiếu động lực\").",
+        "Với mỗi tình huống: phản ứng cũ của mình thường là gì, lần tới bước đầu tiên mình muốn thử là gì.",
+        "Đánh dấu tình huống bạn biết sẽ xảy ra nhưng chưa biết xử lý, để mang tới hỏi Quinn.",
+        "Định nghĩa thành công nhỏ: liệt kê những bằng chứng nhỏ cho thấy \"mình đang học cách sống giống phiên bản mình muốn hơn\"."
+      ]}
+    ]
+  },
+
+  d19: {
+    title: "Ngày 19: Cách tôi muốn sống cùng cơ thể này",
+    breadcrumb: ["Vòng 3", "Ngày 19"],
+    duration: "Sách bài tập",
+    channel: "Sách bài tập",
+    hasVideo: false,
+    videoId: "",
+    wb: { t: "Sách 3, Phần 5: Cách mình muốn sống cùng cơ thể này", id: "1pHwL7b6Rj4HuwyMydWnSZ6ZgVVv1Q1RSzC3cq1XT34o" },
+    intro: "Hôm nay sẽ không có thêm kiến thức hay kế hoạch mới. Sau những gì đã quan sát và lựa chọn trong 18 ngày qua, mình muốn bạn dành thời gian cho một câu hỏi cuối cùng: Mình muốn tập luyện tồn tại trong cuộc sống của mình như thế nào, và mình muốn có mối quan hệ ra sao với cơ thể này? Không cần cố viết một câu trả lời thật hay hoặc thật sâu sắc. Hãy để \"Triết lý tập luyện V1.0\" và lá thư cuối bài phản ánh điều thực sự đúng với bạn ở thời điểm hiện tại.",
+    sections: [
+      { h: "Trong bài tập hôm nay bạn sẽ", items: [
+        "Viết ra cách mình muốn tập luyện tồn tại trong cuộc sống, và mối quan hệ mình muốn có với cơ thể này.",
+        "Viết \"Triết lý tập luyện V1.0\" của riêng bạn. Không phải bộ luật, chỉ là lời nhắc về cách bạn muốn chăm sóc cơ thể ở giai đoạn này.",
+        "Viết một lá thư từ phiên bản tương lai gửi lại cho chính mình của ngày hôm nay."
+      ]}
+    ]
+  },
+
+  d20: {
+    title: "Ngày 20: Nhìn lại 3 vòng",
+    breadcrumb: ["Vòng 3", "Ngày 20"],
+    duration: "Video 1 - 2 phút",
+    channel: "Video",
+    hasVideo: true,
+    videoId: "pTi0RO95ntk",
+    intro: "Chào mừng bạn quay lại. Bốn ngày vừa rồi mình cố tình lùi lại để dành nhiều không gian hơn cho bạn: nhìn vào điều mình thực sự muốn, cuộc sống mình đang có, thử đặt việc tập luyện vào cuộc sống đó, nghĩ trước về những lúc mọi thứ không như kế hoạch, và viết ra cách mình muốn sống cùng cơ thể này. Hôm nay không có bài học mới, mình chỉ muốn chúng ta cùng nhìn lại.",
+    sections: [
+      { h: "Ba vòng, ba thứ bạn đã quan sát", items: [
+        "Vòng 1: cách mình phản ứng, những vòng lặp quen thuộc và điều thực sự xảy ra sau câu \"mình thiếu kỷ luật\".",
+        "Vòng 2: cơ thể, cách ăn uống, tập luyện, nghỉ ngơi, giấc ngủ, năng lượng liên quan đến cách cơ thể phản hồi.",
+        "Vòng 3: với tất cả những gì đã biết, mình muốn đi đâu, điều mình muốn, mức đầu tư, vị trí của tập luyện, mối quan hệ với cơ thể."
+      ]},
+      { h: "Bạn không cần có tất cả câu trả lời", items: [
+        "Sau gần ba tuần, có thể một số điều đã rõ, và vẫn còn nhiều câu hỏi. Điều đó hoàn toàn bình thường.",
+        "21 ngày không được thiết kế để bạn tìm ra tất cả câu trả lời, mà để bạn đủ hiểu để tiếp tục tìm."
+      ]},
+      { h: "Thứ quan trọng nhất đã thay đổi", items: [
+        "Trước đây, khi một điều gì đó không hiệu quả, phản ứng đầu tiên thường là \"ăn ít hơn?\", \"tập nhiều hơn?\", \"lại không đủ kỷ luật?\".",
+        "Bây giờ, trước khi vội thay đổi, bạn đã bắt đầu biết dừng lại và hỏi: chuyện gì đang thực sự xảy ra, mình đang quan sát thấy gì, đã đủ thông tin để kết luận chưa, lựa chọn nào phù hợp với mình lúc này."
+      ]}
+    ]
+  },
+
+  d21: {
+    title: "Ngày 21: Tôi đã sẵn sàng",
+    breadcrumb: ["Vòng 3", "Ngày 21"],
+    duration: "Mini Checkpoint + Video 2 - 3 phút",
+    channel: "Mini Checkpoint &middot; Video",
+    hasVideo: true,
+    videoId: "YOyEA_PZPpo",
+    wb: { t: "Mini Checkpoint Vòng 3", id: "1gx66l8gaPYCweUGhaAqB5S8tbgJL0pIytGTDe-0a89Q" },
+    intro: "Đây là ngày cuối. 21 ngày trước, chương trình này được đặt tên là 21 Ngày Hiểu Mình, không phải 21 ngày giảm cân hay xây kỷ luật. Vì trước khi xây một phiên bản mới, có một việc cần làm trước: hiểu phiên bản đang tồn tại. Hôm nay bạn chưa \"hoàn thành việc thay đổi\", nhưng bạn đã có một điểm bắt đầu khác: trước một kế hoạch, bạn đã biết hỏi thêm nó phục vụ mục tiêu nào, có phù hợp với nguồn lực mình có không, mình đang trả cái giá nào, cơ thể phản hồi ra sao.",
+    sections: [
+      { h: "Trong Mini Checkpoint bạn nhìn lại", items: [
+        "Sau 21 ngày, điều gì về bản thân và cơ thể mình đã khá rõ.",
+        "Điều gì mình vẫn cần thêm thời gian để quan sát.",
+        "Ba vòng, ba điều mình mang theo: Vòng 1 mình là một người thường; Vòng 2 cơ thể mình dường như; Vòng 3 và hiện tại, mình muốn.",
+        "Điều gì mình đã có thể tự làm, điều gì vẫn chưa rõ.",
+        "Mình muốn dành thời gian tự thử nghiệm trước, hay đang cần cấu trúc, cá nhân hóa, feedback và một người đồng hành."
+      ]},
+      { h: "Cột mốc: NGƯỜI SẴN SÀNG", items: [
+        "Không phải \"người đã thay đổi\", không phải \"người kỷ luật\". Chỉ là Người Sẵn Sàng: sẵn sàng nhìn mình rõ hơn, thử nghiệm, quan sát khi cơ thể phản hồi khác dự đoán, điều chỉnh khi cuộc sống thay đổi, và không biến một lần chưa làm được thành lý do quay lại điểm xuất phát.",
+        "Bước tiếp theo: từ quan sát và hiểu sang thực hành. 90 Ngày Chuyển Mình đưa những điều bạn đã hiểu vào thực hành, quan sát kết quả và điều chỉnh theo thời gian, làm việc với dữ liệu thật của chính bạn."
+      ]}
+    ]
+  }
+};
+
+var LESSON_ORDER = ["d0","d1","d2","d3","d4","d5","d6","d7","d8","d9","d10","d11","d12","d13","d14","d15","d16","d17","d18","d19","d20","d21"];
+
+/* ============================================================
+   CONFIG DANG NHAP
+   ------------------------------------------------------------
+   GAS_URL: dia chi Google Apps Script (ket thuc bang /exec).
+     De trong ("__GAS_URL__") = che do DEMO, dang nhap kieu gi cung vao.
+   OWNER_ACCOUNTS: tai khoan cua ban (admin). Dang nhap bang tai khoan
+     nay se mo het tat ca cac ngay, khong can cho drip. Them tai khoan
+     thu cong o day: "email": "matkhau".
+   ============================================================ */
+var GAS_URL = "https://script.google.com/macros/s/AKfycbyc1gwhRXHeLljXby5PVqA5zkbT8LuJcdORLwELQG3Wu0lYUknTwrv5JUV_nYFQmZT6/exec";
+var DEMO_MODE = !GAS_URL || GAS_URL === "__GAS_URL__";
+var OWNER_ACCOUNTS = {
+  "quinnfit.training@gmail.com": "123"
+};
+var SESSION_KEY = "quinnfit_21ngay_session";
+var PROGRESS_KEY = "quinnfit_21ngay_progress";
+var OWNER = false;
+function isPreview() {
+  var s = ((location.hash || "") + (location.search || "")).toLowerCase();
+  return s.indexOf("preview") !== -1;
+}
+
+/* ============================================================
+   TIEN DO + MO KHOA THEO NGAY
+   ============================================================ */
+function loadProgress() {
+  try {
+    var p = JSON.parse(localStorage.getItem(PROGRESS_KEY));
+    if (p && p.unlocked && p.completed) return p;
+  } catch (e) {}
+  return { unlocked: {}, completed: {} };
+}
+function saveProgress() {
+  try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress)); } catch (e) {}
+}
+var progress = loadProgress();
+
+function startOfDay(ts) {
+  var d = new Date(ts);
+  d.setHours(0, 0, 0, 0);
+  return d.getTime();
+}
+function refreshUnlocks() {
+  var now = Date.now();
+  var changed = false;
+  for (var i = 0; i < LESSON_ORDER.length; i++) {
+    var id = LESSON_ORDER[i];
+    if (progress.unlocked[id]) continue;
+    if (i <= 1) { progress.unlocked[id] = now; changed = true; continue; }
+    var prev = LESSON_ORDER[i - 1];
+    if (!progress.completed[prev] || !progress.unlocked[prev]) continue;
+    // Mo khi da sang ngay hom sau so voi ngay mo cua bai truoc (qua 00:00),
+    // hoac ngay lap tuc neu tat DRIP_ENABLED.
+    if (!DRIP_ENABLED || startOfDay(now) > startOfDay(progress.unlocked[prev])) {
+      progress.unlocked[id] = now; changed = true;
+    }
+  }
+  if (changed) saveProgress();
+}
+function isUnlocked(id) { return isPreview() || OWNER || !!progress.unlocked[id]; }
+
+function fmtDate(ts) {
+  var d = new Date(ts);
+  function p(n) { return (n < 10 ? "0" : "") + n; }
+  return p(d.getDate()) + "/" + p(d.getMonth() + 1) + "/" + d.getFullYear();
+}
+function nextUnlockInfo(id) {
+  var i = LESSON_ORDER.indexOf(id);
+  var prev = LESSON_ORDER[i - 1];
+  if (!progress.completed[prev]) return { reason: "prev", prevTitle: LESSONS[prev].title };
+  var at = startOfDay(progress.unlocked[prev] || Date.now()) + 86400000;
+  return { reason: "time", at: at };
+}
+function markComplete(id) {
+  if (progress.completed[id]) return;
+  progress.completed[id] = Date.now();
+  saveProgress();
+  refreshUnlocks();
+  updateSidebar();
+  renderLesson(id);
+}
+function updateSidebar() {
+  var doneCount = 0;
+  document.querySelectorAll(".lesson-item").forEach(function (el) {
+    var id = el.dataset.lesson;
+    var unlocked = isUnlocked(id);
+    var done = !!progress.completed[id];
+    if (done) doneCount++;
+    el.classList.toggle("locked", !unlocked);
+    var flag = el.querySelector(".lesson-flag");
+    if (!flag) { flag = document.createElement("span"); flag.className = "lesson-flag"; el.appendChild(flag); }
+    flag.innerHTML = done ? "&#10003;" : (unlocked ? "" : "&#128274;");
+  });
+  var total = LESSON_ORDER.length;
+  document.getElementById("progressFill").style.width = Math.round(doneCount / total * 100) + "%";
+  document.getElementById("progressText").textContent = doneCount + " / " + total + " ngày đã hoàn thành";
+}
+
+/* ============================================================
+   DANG NHAP
+   ============================================================ */
+var loginScreen = document.getElementById("loginScreen");
+var dashboard = document.getElementById("dashboard");
+var loginForm = document.getElementById("loginForm");
+var loginError = document.getElementById("loginError");
+if (!DEMO_MODE) { var dn = document.getElementById("demoNote"); if (dn) dn.style.display = "none"; }
+
+loginForm.addEventListener("submit", function (e) {
+  e.preventDefault();
+  var email = document.getElementById("email").value.trim();
+  var password = document.getElementById("password").value.trim();
+  loginError.classList.remove("show");
+  if (!email || !password) { loginError.classList.add("show"); return; }
+
+  // 1) Tai khoan admin cua ban -> mo het cac ngay
+  if (OWNER_ACCOUNTS[email.toLowerCase()] === password) {
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ email: email, name: "Quinn", owner: true }));
+    showDashboard(email, "Quinn", true);
+    return;
+  }
+
+  // 2) Che do demo (chua noi backend)
+  if (DEMO_MODE) { showDashboard(email); return; }
+
+  // 3) Kiem tra qua Google Apps Script (hoc vien da mua)
+  fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "verifyLogin", email: email, password: password }) })
+    .then(function (r) { return r.json(); })
+    .then(function (json) {
+      if (!json.success) { loginError.classList.add("show"); return; }
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify({ email: email, name: json.name }));
+      showDashboard(email, json.name);
+    })
+    .catch(function () { loginError.classList.add("show"); });
+});
+
+function showDashboard(email, name, owner) {
+  OWNER = !!owner;
+  document.getElementById("userEmail").textContent = email;
+  var displayName = name || email.split("@")[0].replace(/[._-]/g, " ").replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+  document.getElementById("userName").textContent = displayName || "Học viên";
+  loginScreen.style.display = "none";
+  dashboard.classList.add("active");
+  refreshUnlocks();
+  updateSidebar();
+  renderLesson(LESSON_ORDER[0]);
+}
+
+var savedSession = sessionStorage.getItem(SESSION_KEY);
+if (savedSession && (!DEMO_MODE || JSON.parse(savedSession).owner)) {
+  try { var s = JSON.parse(savedSession); showDashboard(s.email, s.name, s.owner); } catch (e) {}
+}
+
+document.getElementById("logoutBtn").addEventListener("click", function () {
+  sessionStorage.removeItem(SESSION_KEY);
+  OWNER = false;
+  dashboard.classList.remove("active");
+  loginScreen.style.display = "flex";
+  document.getElementById("email").value = "";
+  document.getElementById("password").value = "";
+  loginError.classList.remove("show");
+});
+
+/* ============================================================
+   HIEN THI BAI HOC
+   ============================================================ */
+function resourceCard(icon, title, desc, action, url) {
+  var act = url ? action + " &rarr;" : "Sắp có";
+  var inner = '<div class="resource-icon">' + icon + '</div>' +
+    '<div class="resource-info"><div class="title">' + title + '</div><div class="desc">' + desc + '</div></div>' +
+    '<div class="resource-action">' + act + '</div>';
+  return url
+    ? '<a class="resource-card" href="' + url + '" target="_blank" rel="noopener">' + inner + '</a>'
+    : '<div class="resource-card">' + inner + '</div>';
+}
+
+function closeSidebar() {
+  document.getElementById("sidebar").classList.remove("open");
+  document.getElementById("menuOverlay").classList.remove("show");
+}
+
+function renderLesson(id) {
+  var lesson = LESSONS[id];
+  if (!lesson) return;
+
+  document.querySelectorAll(".lesson-item").forEach(function (el) {
+    el.classList.toggle("active", el.dataset.lesson === id);
+  });
+
+  if (!isUnlocked(id)) {
+    var info = nextUnlockInfo(id);
+    var msg = info.reason === "prev"
+      ? 'Bạn cần hoàn thành xong <strong>' + info.prevTitle + '</strong> trước đã.'
+      : 'Bạn đã hoàn thành ngày trước. Ngày này sẽ mở vào <strong>' + fmtDate(info.at) + '</strong> (đầu ngày hôm sau).';
+    document.getElementById("mainContent").innerHTML =
+      '<div class="locked-panel"><div class="ico">&#128274;</div>' +
+      '<h2>' + lesson.title + '</h2>' +
+      '<p>Nội dung mở dần theo từng ngày để bạn có thời gian thực hành, không xem dồn một lúc.</p>' +
+      '<p>' + msg + '</p></div>';
+    closeSidebar();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
+
+  var crumb = lesson.breadcrumb.map(function (b, i) {
+    return i === lesson.breadcrumb.length - 1 ? '<span class="accent">' + b + '</span>' : b;
+  }).join('<span class="sep">/</span>');
+
+  var videoHtml = "";
+  if (lesson.videoId) {
+    videoHtml = '<div class="video-wrap"><iframe src="https://www.youtube.com/embed/' + lesson.videoId +
+      '?rel=0&modestbranding=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>';
+  } else if (lesson.hasVideo) {
+    videoHtml = '<div class="video-wrap"><div class="video-placeholder"><div class="ico">&#127916;</div>' +
+      '<div class="t">Video sẽ được cập nhật</div>' +
+      '<div class="s">Bài này có video. Khi bạn điền mã YouTube vào phần videoId của bài, video sẽ hiện ở đây.</div></div></div>';
+  }
+
+  var body = "";
+  if (lesson.intro) body += '<p style="font-size:1.05rem;color:var(--text);line-height:1.85;margin-bottom:32px;">' + lesson.intro + '</p>';
+  (lesson.sections || []).forEach(function (sec) {
+    body += "<h2>" + sec.h + "</h2>";
+    if (sec.items && sec.items.length) body += "<ul>" + sec.items.map(function (i) { return "<li>" + i + "</li>"; }).join("") + "</ul>";
+  });
+
+  if (lesson.wb) {
+    body += "<h2>Sách bài tập ngày này</h2>";
+    if (lesson.wb.id) {
+      var wbBase = lesson.wb.sheet ? SHEET : DOC;
+      var wbKind = lesson.wb.sheet ? "Google Sheets" : "Google Docs";
+      body += '<div class="wb-note">Bài tập nằm trong <strong>' + lesson.wb.t + '</strong>. ' +
+        'Bấm nút bên dưới, ' + wbKind + ' sẽ hỏi <strong>"Tạo bản sao"</strong>. Chọn tạo bản sao để có một file của riêng bạn, ' +
+        'rồi làm bài trực tiếp trên bản đó. Đừng viết vào file gốc.</div>';
+      body += resourceCard("&#128196;", lesson.wb.t, 'Mở hộp thoại "Tạo bản sao" để làm bài riêng', "Lấy bản của tôi", wbBase + lesson.wb.id + "/copy");
+    } else {
+      body += resourceCard("&#128196;", lesson.wb.t, "File đang được chuẩn bị", "", "");
+    }
+  }
+
+  if (lesson.resources) {
+    lesson.resources.forEach(function (r) {
+      body += resourceCard(r.icon, r.title, r.desc, r.action, r.url);
+    });
+  }
+
+  var done = !!progress.completed[id];
+  var idx = LESSON_ORDER.indexOf(id);
+  var nextId = idx < LESSON_ORDER.length - 1 ? LESSON_ORDER[idx + 1] : null;
+  var hint;
+  if (done) {
+    if (nextId && !isUnlocked(nextId)) {
+      var ni = nextUnlockInfo(nextId);
+      hint = ni.reason === "time"
+        ? 'Ngày tiếp theo sẽ mở vào ' + fmtDate(ni.at) + ' (đầu ngày hôm sau).'
+        : 'Ngày tiếp theo đã sẵn sàng.';
+    } else if (nextId) {
+      hint = 'Ngày tiếp theo đã mở. Bạn có thể học tiếp.';
+    } else {
+      hint = 'Bạn đã hoàn thành cả 21 ngày. Chúc mừng bạn.';
+    }
+  } else {
+    hint = 'Xem hết video và làm xong bài tập thì bấm nút này. Ngày tiếp theo sẽ mở vào sáng hôm sau.';
+  }
+  var completeHtml = '<div class="complete-row">' +
+    '<button class="complete-btn' + (done ? " done" : "") + '"' + (done ? " disabled" : "") +
+    ' onclick="markComplete(\'' + id + '\')">' +
+    (done ? "&#10003; Bạn đã hoàn thành ngày này" : "Đánh dấu đã hoàn thành ngày này") + '</button>' +
+    '<div class="complete-hint">' + hint + '</div></div>';
+
+  var prevId = idx > 0 ? LESSON_ORDER[idx - 1] : null;
+  var prev = prevId ? LESSONS[prevId] : null;
+  var next = nextId ? LESSONS[nextId] : null;
+  var navHtml = '<div class="lesson-nav">' +
+    '<button class="nav-btn prev" ' + (!prevId ? "disabled" : "") + ' onclick="' + (prevId ? "renderLesson('" + prevId + "')" : "") + '">' +
+    '<div class="label">Bài trước</div><div class="title">' + (prev ? prev.title : "-") + '</div></button>' +
+    '<button class="nav-btn next" ' + (!nextId ? "disabled" : "") + ' onclick="' + (nextId ? "renderLesson('" + nextId + "')" : "") + '">' +
+    '<div class="label">Bài tiếp</div><div class="title">' + (next ? next.title : "-") + '</div></button></div>';
+
+  document.getElementById("mainContent").innerHTML =
+    '<div class="lesson-breadcrumb">' + crumb + '</div>' +
+    '<div class="lesson-header"><h1>' + lesson.title + '</h1>' +
+    '<div class="meta"><span><span class="accent">&#9200;</span> ' + lesson.duration + '</span>' +
+    '<span><span class="accent">&#128218;</span> 21 Ngày Hiểu Mình&trade;</span></div></div>' +
+    (lesson.channel ? '<span class="channel-tag">' + lesson.channel + '</span>' : "") +
+    videoHtml +
+    '<div class="lesson-body">' + body + '</div>' +
+    completeHtml +
+    navHtml;
+
+  closeSidebar();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+document.querySelectorAll(".lesson-item").forEach(function (el) {
+  el.addEventListener("click", function () { renderLesson(el.dataset.lesson); });
+});
+document.getElementById("menuToggle").addEventListener("click", function () {
+  document.getElementById("sidebar").classList.toggle("open");
+  document.getElementById("menuOverlay").classList.toggle("show");
+});
+document.getElementById("menuOverlay").addEventListener("click", closeSidebar);
+window.addEventListener("hashchange", function () {
+  if (dashboard.classList.contains("active")) {
+    updateSidebar();
+    var active = document.querySelector(".lesson-item.active");
+    renderLesson(active ? active.dataset.lesson : LESSON_ORDER[0]);
+  }
+});
+</script>
+
+</body>
+</html>
