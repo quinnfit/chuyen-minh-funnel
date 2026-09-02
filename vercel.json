@@ -7,6 +7,7 @@
     { "source": "/checkout", "destination": "/checkout.html" },
     { "source": "/xac-nhan", "destination": "/xac-nhan.html" },
     { "source": "/privacy", "destination": "/privacy.html" },
-    { "source": "/refund", "destination": "/refund.html" }
+    { "source": "/refund", "destination": "/refund.html" },
+    { "source": "/tdee", "destination": "/tdee.html" }
   ]
 }

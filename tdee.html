@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Công Cụ Tính TDEE — 21 Ngày Hiểu Mình</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060D1A;--bg2:#0A1628;--bg3:#0D1E3A;
+  --gold:#D4B896;--gold-dim:rgba(212,184,150,0.12);--gold-border:rgba(212,184,150,0.2);
+  --blue:#1B9FE8;
+  --white:#FAFAFA;--w8:rgba(250,250,250,0.8);--w6:rgba(250,250,250,0.6);--w4:rgba(250,250,250,0.4);
+  --font:'Be Vietnam Pro',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--font);background:var(--bg);color:var(--white);line-height:1.75;min-height:100vh;display:flex;flex-direction:column;}
+.header{padding:20px 32px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.header a{font-size:13px;letter-spacing:0.2em;color:var(--gold);font-weight:700;text-decoration:none;}
+main{flex:1;padding:56px 24px;}
+.container{max-width:800px;margin:0 auto;}
+.eyebrow{font-size:11px;letter-spacing:0.28em;color:var(--blue);font-weight:700;display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.eyebrow::before{content:'';width:18px;height:1px;background:var(--blue);flex-shrink:0;}
+h1{font-size:clamp(24px,4vw,32px);font-weight:700;margin-bottom:12px;}
+.sub{font-size:15px;color:var(--w6);max-width:640px;margin-bottom:36px;}
+.tool-box{background:rgba(255,255,255,0.03);border:1px solid var(--gold-border);border-radius:16px;padding:16px;}
+.tool-box iframe{display:block;background:transparent;}
+.cta-strip{margin-top:36px;background:var(--gold-dim);border:1px solid var(--gold-border);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.cta-strip p{font-size:14px;color:var(--w6);margin:0;}
+.cta-strip strong{color:var(--gold);}
+.btn-gold{display:inline-flex;align-items:center;justify-content:center;padding:12px 28px;background:var(--gold);color:var(--bg);font-family:var(--font);font-size:14px;font-weight:700;letter-spacing:0.08em;border:none;cursor:pointer;text-decoration:none;transition:opacity 0.2s;white-space:nowrap;}
+.btn-gold:hover{opacity:0.9;}
+footer{padding:24px 0;text-align:center;border-top:1px solid rgba(255,255,255,0.05);color:var(--w4);font-size:12px;}
+@media(max-width:520px){
+  .header{padding:16px 20px;}
+  .tool-box{padding:10px;border-radius:12px;}
+  .cta-strip{flex-direction:column;align-items:flex-start;}
+}
+</style>
+</head>
+<body>
+
+<header class="header"><a href="/">← 21 NGÀY HIỂU MÌNH</a></header>
+
+<main>
+  <div class="container">
+    <div class="eyebrow">Công cụ miễn phí</div>
+    <h1>Tính TDEE Của Bạn</h1>
+    <p class="sub">TDEE (Total Daily Energy Expenditure) là tổng lượng calo cơ thể bạn tiêu thụ mỗi ngày. Đây là con số nền tảng bạn sẽ dùng trong Vòng 2 của hành trình 21 Ngày Hiểu Mình để xác định chế độ ăn và tập luyện phù hợp với thể trạng của mình.</p>
+
+    <div class="tool-box">
+      <iframe
+        src="https://www.thehinh.com/tool/embed/TDEE/"
+        title="Công cụ tính TDEE"
+        data-fitcalc-embed="tdee"
+        width="100%"
+        height="820"
+        style="width:100%;border:0;border-radius:12px;overflow:hidden;"
+        loading="lazy"
+        allow="clipboard-write"
+      ></iframe>
+    </div>
+
+    <div class="cta-strip">
+      <p>Muốn biết chính xác cách áp dụng con số TDEE này vào chế độ ăn và tập luyện của riêng bạn? <strong>21 Ngày Hiểu Mình</strong> sẽ hướng dẫn từng bước.</p>
+      <a href="/dang-ky" class="btn-gold">Bắt Đầu Hành Trình →</a>
+    </div>
+  </div>
+</main>
+
+<footer>© 2026 21 Ngày Hiểu Mình · Chuyển Mình · Shift Within · Quinn Nguyễn</footer>
+
+<script>
+  (function () {
+    function resizeFitcalcEmbed(event) {
+      var data = event.data;
+      if (!data || data.type !== 'fitcalc:resize' || data.tool !== 'tdee') return;
+      var frames = document.querySelectorAll('iframe[data-fitcalc-embed="tdee"]');
+      frames.forEach(function (frame) {
+        if (frame.contentWindow === event.source && data.height) {
+          frame.style.height = Math.max(680, data.height) + 'px';
+        }
+      });
+    }
+    window.addEventListener('message', resizeFitcalcEmbed);
+  })();
+</script>
+
+</body>
+</html>
