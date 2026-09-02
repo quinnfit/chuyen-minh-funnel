@@ -13,8 +13,8 @@ const CONFIG = {
   EMAIL_SENDER_NAME: '21 Ngày Hiểu Mình™',
   EMAIL_REPLY_TO: 'quinnfit.training@gmail.com',
 
-  // Điền link Zalo group sau khi có
-  ZALO_GROUP_URL: '__ZALO_GROUP_URL__',
+  ZALO_GROUP_URL: 'https://zalo.me/g/hu37f2kanss5wtvzpvfx',
+  COURSE_URL: 'https://21ngay-hieuminh.vercel.app/khoahoc',
 
   PRODUCT_NAME: '21 Ngày Hiểu Mình™',
   PRODUCT_PRICE: 499000,
@@ -61,17 +61,26 @@ function getSheet() {
   return sheet;
 }
 
-// Chạy 1 lần để thêm cột "password" (cột P) vào Sheet đang có sẵn.
+// Chạy 1 lần để thêm cột "password" (P) và "pwdChangedAt" (Q) vào Sheet đang có sẵn.
 function addPasswordColumn() {
   const sheet = getSheet();
-  if (sheet.getRange(1, 16).getValue()) {
+  if (!sheet.getRange(1, 16).getValue()) {
+    sheet.getRange(1, 16).setValue('password')
+      .setFontWeight('bold').setBackground('#060D1A').setFontColor('#D4B896');
+    sheet.setColumnWidth(16, 130);
+    Logger.log('Đã thêm cột password ở vị trí P.');
+  } else {
     Logger.log('Cột password (P) đã có sẵn.');
-    return;
   }
-  sheet.getRange(1, 16).setValue('password')
-    .setFontWeight('bold').setBackground('#060D1A').setFontColor('#D4B896');
-  sheet.setColumnWidth(16, 130);
-  Logger.log('Đã thêm cột password ở vị trí P.');
+  if (!sheet.getRange(1, 17).getValue()) {
+    sheet.getRange(1, 17).setValue('pwdChangedAt')
+      .setFontWeight('bold').setBackground('#060D1A').setFontColor('#D4B896');
+    sheet.setColumnWidth(17, 150);
+    sheet.getRange('Q:Q').setNumberFormat('dd/MM/yyyy HH:mm:ss');
+    Logger.log('Đã thêm cột pwdChangedAt ở vị trí Q.');
+  } else {
+    Logger.log('Cột pwdChangedAt (Q) đã có sẵn.');
+  }
 }
 
 function formatDateColumns() {
@@ -184,6 +193,7 @@ function getStatus(orderId) {
 }
 
 // Xác thực đăng nhập khu vực học viên: email + password + đơn đã PAID.
+// mustChange = true nếu học viên chưa từng đổi mật khẩu (cột Q trống).
 function verifyLogin(email, password) {
   if (!email || !password) return { success: false, error: 'Missing credentials' };
   const sheet = getSheet();
@@ -195,10 +205,40 @@ function verifyLogin(email, password) {
     const rowPwd = String(data[i][15] || '').trim();
     const status = data[i][10];
     if (rowEmail === emailLower && rowPwd && rowPwd === pwd && status === 'PAID') {
-      return { success: true, name: data[i][2], orderId: data[i][0] };
+      return {
+        success: true,
+        name: data[i][2],
+        orderId: data[i][0],
+        mustChange: !data[i][16]
+      };
     }
   }
   return { success: false, error: 'Invalid credentials' };
+}
+
+// Đổi mật khẩu: cần email + mật khẩu hiện tại đúng + đơn PAID.
+function changePassword(email, currentPassword, newPassword) {
+  if (!email || !currentPassword || !newPassword) {
+    return { success: false, error: 'Thiếu thông tin.' };
+  }
+  if (String(newPassword).trim().length < 6) {
+    return { success: false, error: 'Mật khẩu mới cần ít nhất 6 ký tự.' };
+  }
+  const sheet = getSheet();
+  const data = sheet.getDataRange().getValues();
+  const emailLower = String(email).toLowerCase().trim();
+  const cur = String(currentPassword).trim();
+  for (let i = 1; i < data.length; i++) {
+    const rowEmail = String(data[i][4] || '').toLowerCase().trim();
+    const rowPwd = String(data[i][15] || '').trim();
+    const status = data[i][10];
+    if (rowEmail === emailLower && rowPwd && rowPwd === cur && status === 'PAID') {
+      sheet.getRange(i + 1, 16).setValue(String(newPassword).trim());
+      sheet.getRange(i + 1, 17).setValue(new Date());
+      return { success: true, name: data[i][2] };
+    }
+  }
+  return { success: false, error: 'Mật khẩu hiện tại không đúng.' };
 }
 
 function detectBumpsFromAmount(amount) {
@@ -325,7 +365,7 @@ function sendConfirmationEmail(order) {
     hasZalo: !!CONFIG.ZALO_GROUP_URL
   };
 
-  const subject = '21 Ngày Hiểu Mình™ — Xác nhận đơn hàng · Mã ' + v.orderId;
+  const subject = '21 Ngày Hiểu Mình - Xác nhận đơn hàng, mã ' + v.orderId;
 
   MailApp.sendEmail({
     to: order.email,
@@ -338,20 +378,17 @@ function sendConfirmationEmail(order) {
 }
 
 function buildHtmlEmail(v) {
-  const zaloRow = v.hasZalo
-    ? '<p>3. Tham gia <a href="' + CONFIG.ZALO_GROUP_URL + '" style="color:#1B9FE8">cộng đồng Zalo kín</a> — nơi bạn duy trì nhịp thực hành cùng mọi người.</p>'
-    : '<p>3. Cộng đồng Zalo kín — link sẽ được gửi riêng cho bạn trong 24 giờ.</p>';
-
+  const courseUrl = CONFIG.COURSE_URL || (CONFIG.SITE_URL + '/khoahoc');
   return [
     '<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"></head>',
     '<body style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.7;color:#222;max-width:600px;margin:0 auto;padding:24px;background:#fff">',
 
     '<div style="background:#060D1A;padding:20px 24px;margin-bottom:24px">',
-    '<p style="color:#D4B896;font-size:13px;letter-spacing:0.2em;font-weight:700;margin:0">21 NGÀY HIỂU MÌNH™</p>',
+    '<p style="color:#D4B896;font-size:13px;letter-spacing:0.2em;font-weight:700;margin:0">21 NGÀY HIỂU MÌNH</p>',
     '</div>',
 
     '<h2 style="color:#222;font-size:20px;margin:0 0 16px">Chào ' + esc(v.name) + ',</h2>',
-    '<p>Thanh toán đã được xác nhận. Chào mừng bạn bắt đầu hành trình <strong>21 Ngày Hiểu Mình™</strong> — hiểu bản thân, hiểu cơ thể để chuyển hóa vóc dáng một cách tự nhiên, không kỷ luật cưỡng ép.</p>',
+    '<p>Thanh toán đã được xác nhận. Chào mừng bạn bắt đầu hành trình <strong>21 Ngày Hiểu Mình</strong>: hiểu bản thân, hiểu cơ thể để chuyển hóa vóc dáng một cách tự nhiên, không kỷ luật cưỡng ép.</p>',
 
     '<div style="background:#f9f6f2;padding:16px 20px;border-left:3px solid #D4B896;margin:20px 0">',
     '<p style="margin:0;font-size:14px">',
@@ -361,35 +398,35 @@ function buildHtmlEmail(v) {
     '</p>',
     '</div>',
 
-    '<h3 style="font-size:16px;color:#222;margin:24px 0 8px">Thông tin đăng nhập khu vực học viên</h3>',
+    '<h3 style="font-size:16px;color:#222;margin:24px 0 8px">1. Thông tin đăng nhập khu vực học viên</h3>',
     '<div style="background:#fafafa;padding:16px 20px;border:2px dashed #D4B896;border-radius:8px;margin:12px 0;font-family:monospace;font-size:14px">',
-    'Trang học: <strong>' + CONFIG.SITE_URL + '/khoahoc</strong><br>',
+    'Trang học: <strong>' + courseUrl + '</strong><br>',
     'Email: <strong>' + esc(v.email) + '</strong><br>',
-    'Mật khẩu: <strong style="color:#5C1A1B;font-size:16px">' + esc(v.password) + '</strong>',
+    'Mật khẩu tạm: <strong style="color:#5C1A1B;font-size:16px">' + esc(v.password) + '</strong>',
     '</div>',
-    '<p style="margin:12px 0"><a href="' + CONFIG.SITE_URL + '/khoahoc" style="display:inline-block;background:#D4B896;color:#0A0A0A;padding:12px 26px;border-radius:8px;text-decoration:none;font-weight:700;font-size:14px">Vào khu vực học viên →</a></p>',
-    '<p style="font-size:13px;color:#666">Lưu lại email và mật khẩu này để đăng nhập lại bất cứ lúc nào. Nội dung mở dần theo từng ngày.</p>',
+    '<p style="font-size:14px;color:#333"><strong>Ngay lần đăng nhập đầu tiên, hệ thống sẽ yêu cầu bạn đổi sang mật khẩu của riêng mình.</strong> Hãy chọn một mật khẩu bạn dễ nhớ (ít nhất 6 ký tự) và lưu lại.</p>',
+    '<p style="margin:14px 0"><a href="' + courseUrl + '" style="display:inline-block;background:#D4B896;color:#0A0A0A;padding:12px 26px;border-radius:8px;text-decoration:none;font-weight:700;font-size:14px">Vào khu vực học viên</a></p>',
 
-    '<h3 style="font-size:16px;color:#222;margin:24px 0 8px">Video chào mừng từ Quinn</h3>',
-    '<p><a href="' + CONFIG.WELCOME_VIDEO_URL + '" style="color:#1B9FE8;font-weight:600">' + CONFIG.WELCOME_VIDEO_URL + '</a></p>',
+    '<h3 style="font-size:16px;color:#222;margin:24px 0 8px">2. Vào nhóm Zalo kín</h3>',
+    '<p>Nhóm là nơi bạn nhận nhắc nhở mỗi ngày và duy trì nhịp thực hành cùng mọi người.</p>',
+    '<p style="margin:12px 0"><a href="' + CONFIG.ZALO_GROUP_URL + '" style="display:inline-block;background:#1B9FE8;color:#fff;padding:12px 26px;border-radius:8px;text-decoration:none;font-weight:700;font-size:14px">Tham gia nhóm Zalo</a></p>',
+    '<p style="font-size:13px;color:#666">Nếu nút không bấm được, mở link này: ' + CONFIG.ZALO_GROUP_URL + '</p>',
 
-    '<div style="background:#f9f6f2;padding:16px 20px;border-left:3px solid #1B9FE8;margin:24px 0;font-size:14px">',
-    '<p style="margin:0"><strong>Về cách nội dung được gửi:</strong><br>',
-    'Nội dung hành trình (video + sách bài tập từng Vòng) sẽ được <strong>mở khoá dần theo từng ngày</strong> trong khu vực học viên — không mở hết một lần.</p>',
-    '</div>',
-
-    '<div style="background:#f9f6f2;padding:16px 20px;margin:24px 0;font-size:14px">',
-    '<strong>Bước tiếp theo:</strong><br>',
-    '<p style="margin:8px 0 0">1. Đăng nhập khu vực học viên bằng email và mật khẩu ở trên.</p>',
-    '<p>2. Xem video chào mừng, rồi bắt đầu Ngày 1.</p>',
-    zaloRow,
-    '<p>4. Mỗi ngày hoàn thành một bài; ngày tiếp theo mở vào sáng hôm sau.</p>',
+    '<h3 style="font-size:16px;color:#222;margin:24px 0 8px">3. Chương trình vận hành thế nào</h3>',
+    '<div style="background:#f9f6f2;padding:16px 20px;border-left:3px solid #1B9FE8;margin:12px 0;font-size:14px">',
+    '<p style="margin:0 0 10px">Hành trình gồm <strong>21 ngày, chia 3 vòng</strong>: Nhìn Thấy → Hiểu Cơ Thể → Hiểu Đích Đến.</p>',
+    '<p style="margin:0 0 10px">Nội dung <strong>mở dần theo từng ngày</strong>, không mở hết một lần. Mỗi ngày chỉ mất 15 đến 20 phút: có ngày xem video, có ngày làm sách bài tập, có ngày chỉ cần đọc và quan sát bản thân.</p>',
+    '<p style="margin:0 0 10px">Mỗi ngày, xem hoặc làm xong thì bấm nút <strong>"Đánh dấu đã hoàn thành"</strong>. Ngày tiếp theo sẽ mở vào <strong>sáng hôm sau</strong> (qua 0 giờ), không cần chờ đủ 24 tiếng.</p>',
+    '<p style="margin:0"><strong>Video chào mừng tính là Ngày 0.</strong> Xem xong và bấm hoàn thành, Ngày 1 sẽ mở vào hôm sau. Vậy nên hãy đăng nhập và xem video chào mừng ngay hôm nay.</p>',
     '</div>',
 
-    '<p style="font-size:14px;color:#555">Có thắc mắc? Reply email này hoặc liên hệ <strong>' + esc(CONFIG.EMAIL_REPLY_TO) + '</strong></p>',
+    '<h3 style="font-size:16px;color:#222;margin:24px 0 8px">4. Video chào mừng từ Quinn</h3>',
+    '<p><a href="' + CONFIG.WELCOME_VIDEO_URL + '" style="color:#1B9FE8;font-weight:600">' + CONFIG.WELCOME_VIDEO_URL + '</a><br><span style="font-size:13px;color:#666">(Video này cũng có sẵn ngay khi bạn đăng nhập khu vực học viên.)</span></p>',
+
+    '<p style="font-size:14px;color:#555;margin-top:24px">Có thắc mắc? Reply email này hoặc nhắn trong nhóm Zalo.</p>',
 
     '<p style="font-size:13px;color:#888;margin-top:32px;border-top:1px solid #eee;padding-top:16px">',
-    '21 Ngày Hiểu Mình™ · Quinn Nguyễn<br>',
+    '21 Ngày Hiểu Mình · Quinn Nguyễn<br>',
     esc(CONFIG.SITE_URL),
     '</p>',
 
@@ -404,22 +441,23 @@ function buildPlainEmail(v) {
   txt += 'Mã đơn: ' + v.orderId + '\n';
   txt += 'Số tiền: ' + v.totalAmount + 'đ\n';
   if (v.goal) txt += 'Điều bạn đang gặp phải: ' + v.goal + '\n';
-  txt += '\nTHONG TIN DANG NHAP KHU VUC HOC VIEN\n';
-  txt += 'Trang hoc: ' + CONFIG.SITE_URL + '/khoahoc\n';
+  const courseUrl = CONFIG.COURSE_URL || (CONFIG.SITE_URL + '/khoahoc');
+  txt += '\n1. THONG TIN DANG NHAP KHU VUC HOC VIEN\n';
+  txt += 'Trang hoc: ' + courseUrl + '\n';
   txt += 'Email: ' + v.email + '\n';
-  txt += 'Mat khau: ' + v.password + '\n';
-  txt += 'Luu lai email va mat khau nay de dang nhap lai bat cu luc nao.\n\n';
-  txt += 'VIDEO CHAO MUNG TU QUINN\n' + CONFIG.WELCOME_VIDEO_URL + '\n\n';
-  txt += 'VE CACH NOI DUNG DUOC GUI\n';
-  txt += 'Noi dung hanh trinh (video + sach bai tap tung Vong) se duoc mo khoa dan theo tung ngay trong khu vuc hoc vien.\n\n';
-  txt += 'BUOC TIEP THEO\n';
-  txt += '1. Dang nhap khu vuc hoc vien bang email va mat khau o tren.\n';
-  txt += '2. Xem video chao mung, roi bat dau Ngay 1.\n';
-  txt += v.hasZalo
-    ? '3. Tham gia cong dong Zalo kin: ' + CONFIG.ZALO_GROUP_URL + '\n'
-    : '3. Link cong dong Zalo kin se duoc gui rieng trong 24 gio.\n';
-  txt += '4. Moi ngay hoan thanh mot bai; ngay tiep theo mo vao sang hom sau.\n\n';
-  txt += 'Lien he: ' + CONFIG.EMAIL_REPLY_TO + '\n\n';
+  txt += 'Mat khau tam: ' + v.password + '\n';
+  txt += 'Ngay lan dang nhap dau tien, he thong se yeu cau ban doi sang mat khau cua rieng minh (it nhat 6 ky tu). Hay luu lai.\n\n';
+  txt += '2. VAO NHOM ZALO KIN\n';
+  txt += CONFIG.ZALO_GROUP_URL + '\n';
+  txt += 'Nhom la noi ban nhan nhac nho moi ngay va duy tri nhip thuc hanh cung moi nguoi.\n\n';
+  txt += '3. CHUONG TRINH VAN HANH THE NAO\n';
+  txt += 'Hanh trinh gom 21 ngay, chia 3 vong: Nhin Thay -> Hieu Co The -> Hieu Dich Den.\n';
+  txt += 'Noi dung mo dan theo tung ngay, khong mo het mot lan. Moi ngay chi mat 15-20 phut.\n';
+  txt += 'Moi ngay xem/lam xong thi bam nut "Danh dau da hoan thanh". Ngay tiep theo mo vao sang hom sau (qua 0 gio), khong can cho du 24 tieng.\n';
+  txt += 'Video chao mung tinh la Ngay 0. Xem xong va bam hoan thanh, Ngay 1 se mo vao hom sau. Vay nen hay dang nhap va xem video chao mung ngay hom nay.\n\n';
+  txt += '4. VIDEO CHAO MUNG TU QUINN\n' + CONFIG.WELCOME_VIDEO_URL + '\n';
+  txt += '(Video nay cung co san ngay khi ban dang nhap khu vuc hoc vien.)\n\n';
+  txt += 'Co thac mac? Reply email nay hoac nhan trong nhom Zalo.\n\n';
   txt += '--\n21 Ngay Hieu Minh - ' + CONFIG.SITE_URL + '\n';
   return txt;
 }
@@ -461,6 +499,7 @@ function doPost(e) {
     if (body.action === 'createOrder') return corsJson(createOrder(body.data || {}));
     if (body.action === 'updateOrder') return corsJson(updateOrder(body.orderId, body.data || {}));
     if (body.action === 'verifyLogin') return corsJson(verifyLogin(body.email, body.password));
+    if (body.action === 'changePassword') return corsJson(changePassword(body.email, body.currentPassword, body.newPassword));
     if (body.content !== undefined && body.transferAmount !== undefined) {
       const key = (e.parameter && e.parameter.key) || '';
       if (key !== CONFIG.SEPAY_API_KEY) return corsJson({ success: false, error: 'Unauthorized' });

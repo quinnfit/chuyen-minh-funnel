@@ -391,6 +391,25 @@ h1, h2, h3, h4 {
   </div>
 </div>
 
+<!-- MAN HINH DOI MAT KHAU LAN DAU -->
+<div class="login-screen" id="changePwScreen" style="display:none">
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="logo">21 Ngày Hiểu Mình</div>
+      <h1>Đổi mật khẩu</h1>
+      <p>Đây là lần đăng nhập đầu tiên. Hãy đặt mật khẩu của riêng bạn để tiếp tục.</p>
+    </div>
+    <form class="login-form" id="changePwForm">
+      <label for="newPw">Mật khẩu mới</label>
+      <input type="password" id="newPw" placeholder="Ít nhất 6 ký tự" required>
+      <label for="newPw2">Nhập lại mật khẩu mới</label>
+      <input type="password" id="newPw2" placeholder="********" required>
+      <button type="submit" class="login-btn">Lưu mật khẩu và vào học</button>
+      <div class="login-error" id="changePwError">Có lỗi xảy ra. Vui lòng thử lại.</div>
+    </form>
+  </div>
+</div>
+
 <!-- DASHBOARD -->
 <div class="dashboard" id="dashboard">
   <div class="top-bar">
@@ -538,7 +557,7 @@ var LESSONS = {
       { h: "Cách học", items: [
         "Mỗi ngày chỉ cần 15 đến 20 phút.",
         "Có ngày xem video, có ngày làm sách bài tập, có ngày chỉ cần đọc một đoạn ngắn và quan sát bản thân.",
-        "Nội dung mở dần từng ngày. Xem xong một ngày và bấm \"đã hoàn thành\", ngày tiếp theo sẽ mở vào sáng hôm sau.",
+        "Nội dung mở dần từng ngày. Xem xong một ngày và bấm \"đã hoàn thành\", ngày tiếp theo sẽ mở vào sáng hôm sau. Video chào mừng này cũng tính là một ngày: xem xong và bấm hoàn thành, Ngày 1 sẽ mở vào hôm sau.",
         "Không cần làm hoàn hảo. Chỉ cần quay lại mỗi ngày."
       ]}
     ]
@@ -1070,7 +1089,7 @@ function refreshUnlocks() {
   for (var i = 0; i < LESSON_ORDER.length; i++) {
     var id = LESSON_ORDER[i];
     if (progress.unlocked[id]) continue;
-    if (i <= 1) { progress.unlocked[id] = now; changed = true; continue; }
+    if (i === 0) { progress.unlocked[id] = now; changed = true; continue; }
     var prev = LESSON_ORDER[i - 1];
     if (!progress.completed[prev] || !progress.unlocked[prev]) continue;
     // Mo khi da sang ngay hom sau so voi ngay mo cua bai truoc (qua 00:00),
@@ -1124,6 +1143,7 @@ function updateSidebar() {
    DANG NHAP
    ============================================================ */
 var loginScreen = document.getElementById("loginScreen");
+var changePwScreen = document.getElementById("changePwScreen");
 var dashboard = document.getElementById("dashboard");
 var loginForm = document.getElementById("loginForm");
 var loginError = document.getElementById("loginError");
@@ -1151,10 +1171,46 @@ loginForm.addEventListener("submit", function (e) {
     .then(function (r) { return r.json(); })
     .then(function (json) {
       if (!json.success) { loginError.classList.add("show"); return; }
+      if (json.mustChange) { showChangePassword(email, password, json.name); return; }
       sessionStorage.setItem(SESSION_KEY, JSON.stringify({ email: email, name: json.name }));
       showDashboard(email, json.name);
     })
     .catch(function () { loginError.classList.add("show"); });
+});
+
+// Man hinh doi mat khau lan dau
+var pendingLogin = null;
+function showChangePassword(email, currentPassword, name) {
+  pendingLogin = { email: email, currentPassword: currentPassword, name: name };
+  loginScreen.style.display = "none";
+  changePwScreen.style.display = "flex";
+}
+document.getElementById("changePwForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  var err = document.getElementById("changePwError");
+  err.classList.remove("show");
+  var p1 = document.getElementById("newPw").value.trim();
+  var p2 = document.getElementById("newPw2").value.trim();
+  if (p1.length < 6) { err.textContent = "Mật khẩu mới cần ít nhất 6 ký tự."; err.classList.add("show"); return; }
+  if (p1 !== p2) { err.textContent = "Hai ô mật khẩu chưa khớp nhau."; err.classList.add("show"); return; }
+  var btn = e.target.querySelector("button");
+  btn.disabled = true; btn.textContent = "Đang lưu...";
+  fetch(GAS_URL, { method: "POST", body: JSON.stringify({
+    action: "changePassword", email: pendingLogin.email,
+    currentPassword: pendingLogin.currentPassword, newPassword: p1
+  }) })
+    .then(function (r) { return r.json(); })
+    .then(function (json) {
+      btn.disabled = false; btn.textContent = "Lưu mật khẩu và vào học";
+      if (!json.success) { err.textContent = json.error || "Không lưu được. Thử lại."; err.classList.add("show"); return; }
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify({ email: pendingLogin.email, name: json.name || pendingLogin.name }));
+      changePwScreen.style.display = "none";
+      showDashboard(pendingLogin.email, json.name || pendingLogin.name);
+    })
+    .catch(function () {
+      btn.disabled = false; btn.textContent = "Lưu mật khẩu và vào học";
+      err.textContent = "Lỗi kết nối. Thử lại."; err.classList.add("show");
+    });
 });
 
 function showDashboard(email, name, owner) {
