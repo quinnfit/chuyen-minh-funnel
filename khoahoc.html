@@ -1058,9 +1058,14 @@ var OWNER_ACCOUNTS = {
 var SESSION_KEY = "quinnfit_21ngay_session";
 var PROGRESS_KEY = "quinnfit_21ngay_progress";
 var OWNER = false;
+var currentEmail = null;
 function isPreview() {
   var s = ((location.hash || "") + (location.search || "")).toLowerCase();
   return s.indexOf("preview") !== -1;
+}
+function deepLinkDay() {
+  var m = (location.hash || "").match(/^#d(\d{1,2})$/i);
+  return m ? ("d" + m[1]) : null;
 }
 
 /* ============================================================
@@ -1118,9 +1123,17 @@ function markComplete(id) {
   if (progress.completed[id]) return;
   progress.completed[id] = Date.now();
   saveProgress();
+  syncProgressToServer();
   refreshUnlocks();
   updateSidebar();
   renderLesson(id);
+}
+function syncProgressToServer() {
+  if (DEMO_MODE || OWNER || !currentEmail) return;
+  try {
+    fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "syncProgress", email: currentEmail, completed: progress.completed }) })
+      .catch(function () {});
+  } catch (e) {}
 }
 function updateSidebar() {
   var doneCount = 0;
@@ -1213,8 +1226,19 @@ document.getElementById("changePwForm").addEventListener("submit", function (e) 
     });
 });
 
+function defaultLandingLesson() {
+  for (var i = 0; i < LESSON_ORDER.length; i++) {
+    var id = LESSON_ORDER[i];
+    if (isUnlocked(id) && !progress.completed[id]) return id;
+  }
+  for (var j = LESSON_ORDER.length - 1; j >= 0; j--) {
+    if (isUnlocked(LESSON_ORDER[j])) return LESSON_ORDER[j];
+  }
+  return LESSON_ORDER[0];
+}
 function showDashboard(email, name, owner) {
   OWNER = !!owner;
+  currentEmail = email;
   document.getElementById("userEmail").textContent = email;
   var displayName = name || email.split("@")[0].replace(/[._-]/g, " ").replace(/\b\w/g, function (c) { return c.toUpperCase(); });
   document.getElementById("userName").textContent = displayName || "Học viên";
@@ -1222,7 +1246,9 @@ function showDashboard(email, name, owner) {
   dashboard.classList.add("active");
   refreshUnlocks();
   updateSidebar();
-  renderLesson(LESSON_ORDER[0]);
+  var target = deepLinkDay();
+  if (!target || !isUnlocked(target)) target = defaultLandingLesson();
+  renderLesson(target);
 }
 
 var savedSession = sessionStorage.getItem(SESSION_KEY);

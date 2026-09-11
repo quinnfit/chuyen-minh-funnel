@@ -16,10 +16,8 @@ const CONFIG = {
   ZALO_GROUP_URL: 'https://zalo.me/g/hu37f2kanss5wtvzpvfx',
   COURSE_URL: 'https://21ngay-hieuminh.vercel.app/khoahoc',
 
-  PRODUCT_NAME: '21 Ngày Hiểu Mình™',
+  PRODUCT_NAME: '21 Ngày Hiểu Mình',
   PRODUCT_PRICE: 499000,
-  // Video chào mừng — gửi ngay trong email xác nhận. Nội dung 3 Vòng sẽ mở khoá dần, KHÔNG gửi hết trong email này.
-  WELCOME_VIDEO_URL: '__WELCOME_VIDEO_URL__',
 
   BUMP1_NAME: '',
   BUMP1_PRICE: 0,
@@ -81,6 +79,29 @@ function addPasswordColumn() {
   } else {
     Logger.log('Cột pwdChangedAt (Q) đã có sẵn.');
   }
+}
+
+// Chạy 1 lần để thêm các cột theo dõi email nhắc nhở hằng ngày (R, S, T, U).
+function addReminderColumns() {
+  const sheet = getSheet();
+  const specs = [
+    [18, 'reminderTrackedDay'],
+    [19, 'reminderCount'],
+    [20, 'finalEmailSent'],
+    [21, 'progressJson']
+  ];
+  specs.forEach(function (spec) {
+    const col = spec[0], name = spec[1];
+    if (!sheet.getRange(1, col).getValue()) {
+      sheet.getRange(1, col).setValue(name)
+        .setFontWeight('bold').setBackground('#060D1A').setFontColor('#D4B896');
+      sheet.setColumnWidth(col, 140);
+      Logger.log('Đã thêm cột ' + name + ' ở vị trí cột ' + col + '.');
+    } else {
+      Logger.log('Cột ' + name + ' đã có sẵn.');
+    }
+  });
+  sheet.getRange('T:T').setNumberFormat('dd/MM/yyyy HH:mm:ss');
 }
 
 function formatDateColumns() {
@@ -151,6 +172,7 @@ function createOrder(data) {
     Number(data.totalAmount) || CONFIG.PRODUCT_PRICE,
     ckContent,
     'PENDING',
+    '', '', '', '', '',
     '', '', '', '', ''
   ]);
 
@@ -241,6 +263,24 @@ function changePassword(email, currentPassword, newPassword) {
   return { success: false, error: 'Mật khẩu hiện tại không đúng.' };
 }
 
+// Hoc vien bam "da hoan thanh" tren trang hoc -> dong bo tien do len Sheet (cot U).
+// completedMap dang { d0: <timestamp>, d1: <timestamp>, ... }.
+function syncProgress(email, completedMap) {
+  if (!email) return { success: false, error: 'Missing email' };
+  const sheet = getSheet();
+  const data = sheet.getDataRange().getValues();
+  const emailLower = String(email).toLowerCase().trim();
+  for (let i = 1; i < data.length; i++) {
+    const rowEmail = String(data[i][4] || '').toLowerCase().trim();
+    const status = data[i][10];
+    if (rowEmail === emailLower && status === 'PAID') {
+      sheet.getRange(i + 1, 21).setValue(JSON.stringify(completedMap || {}));
+      return { success: true };
+    }
+  }
+  return { success: false, error: 'Order not found' };
+}
+
 function detectBumpsFromAmount(amount) {
   const base = CONFIG.PRODUCT_PRICE;
   const p1 = CONFIG.BUMP1_PRICE;
@@ -270,7 +310,8 @@ function handleSepayWebhook(payload) {
       '', '', '', '',
       '', '', amount, content,
       'UNMATCHED', '', String(payload.id || ''), '',
-      JSON.stringify(payload), ''
+      JSON.stringify(payload), '',
+      '', '', '', '', ''
     ]);
     return { success: true, message: 'No matching order, logged for manual review' };
   }
@@ -417,11 +458,8 @@ function buildHtmlEmail(v) {
     '<p style="margin:0 0 10px">Hành trình gồm <strong>21 ngày, chia 3 vòng</strong>: Nhìn Thấy → Hiểu Cơ Thể → Hiểu Đích Đến.</p>',
     '<p style="margin:0 0 10px">Nội dung <strong>mở dần theo từng ngày</strong>, không mở hết một lần. Mỗi ngày chỉ mất 15 đến 20 phút: có ngày xem video, có ngày làm sách bài tập, có ngày chỉ cần đọc và quan sát bản thân.</p>',
     '<p style="margin:0 0 10px">Mỗi ngày, xem hoặc làm xong thì bấm nút <strong>"Đánh dấu đã hoàn thành"</strong>. Ngày tiếp theo sẽ mở vào <strong>sáng hôm sau</strong> (qua 0 giờ), không cần chờ đủ 24 tiếng.</p>',
-    '<p style="margin:0"><strong>Video chào mừng tính là Ngày 0.</strong> Xem xong và bấm hoàn thành, Ngày 1 sẽ mở vào hôm sau. Vậy nên hãy đăng nhập và xem video chào mừng ngay hôm nay.</p>',
+    '<p style="margin:0"><strong>Bắt đầu ngay hôm nay:</strong> đăng nhập khu vực học viên và xem <strong>Video chào mừng (Ngày 0)</strong> ở ngay trang đầu. Xem xong bấm hoàn thành, Ngày 1 sẽ mở vào hôm sau.</p>',
     '</div>',
-
-    '<h3 style="font-size:16px;color:#222;margin:24px 0 8px">4. Video chào mừng từ Quinn</h3>',
-    '<p><a href="' + CONFIG.WELCOME_VIDEO_URL + '" style="color:#1B9FE8;font-weight:600">' + CONFIG.WELCOME_VIDEO_URL + '</a><br><span style="font-size:13px;color:#666">(Video này cũng có sẵn ngay khi bạn đăng nhập khu vực học viên.)</span></p>',
 
     '<p style="font-size:14px;color:#555;margin-top:24px">Có thắc mắc? Reply email này hoặc nhắn trong nhóm Zalo.</p>',
 
@@ -454,12 +492,190 @@ function buildPlainEmail(v) {
   txt += 'Hanh trinh gom 21 ngay, chia 3 vong: Nhin Thay -> Hieu Co The -> Hieu Dich Den.\n';
   txt += 'Noi dung mo dan theo tung ngay, khong mo het mot lan. Moi ngay chi mat 15-20 phut.\n';
   txt += 'Moi ngay xem/lam xong thi bam nut "Danh dau da hoan thanh". Ngay tiep theo mo vao sang hom sau (qua 0 gio), khong can cho du 24 tieng.\n';
-  txt += 'Video chao mung tinh la Ngay 0. Xem xong va bam hoan thanh, Ngay 1 se mo vao hom sau. Vay nen hay dang nhap va xem video chao mung ngay hom nay.\n\n';
-  txt += '4. VIDEO CHAO MUNG TU QUINN\n' + CONFIG.WELCOME_VIDEO_URL + '\n';
-  txt += '(Video nay cung co san ngay khi ban dang nhap khu vuc hoc vien.)\n\n';
+  txt += 'Bat dau ngay hom nay: dang nhap khu vuc hoc vien va xem Video chao mung (Ngay 0) o ngay trang dau. Xem xong bam hoan thanh, Ngay 1 se mo vao hom sau.\n\n';
   txt += 'Co thac mac? Reply email nay hoac nhan trong nhom Zalo.\n\n';
   txt += '--\n21 Ngay Hieu Minh - ' + CONFIG.SITE_URL + '\n';
   return txt;
+}
+
+// ============================================================
+// EMAIL NHAC NHO HANG NGAY (chay luc 6h sang, xem setupDailyReminderTrigger)
+// ============================================================
+const REMINDER_LAST_DAY = 21;
+const REMINDER_MAX_COUNT = 3;
+
+// Quet toan bo don PAID, gui email nhac/mo khoa/hoan thanh cho tung nguoi.
+function dailyReminderJob() {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(10000)) {
+    Logger.log('Bo qua lan chay nay: dailyReminderJob dang chay o noi khac.');
+    return;
+  }
+  try {
+    const sheet = getSheet();
+    const data = sheet.getDataRange().getValues();
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const status = row[10];
+      const email = row[4];
+      if (status !== 'PAID' || !email) continue;
+      try {
+        processReminderForRow(sheet, i + 1, row);
+      } catch (err) {
+        Logger.log('Loi xu ly reminder cho dong ' + (i + 1) + ': ' + err.toString());
+      }
+    }
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// row la mang 0-based tu getDataRange(). Cot R=17 S=18 T=19 U=20 (chi so mang).
+function processReminderForRow(sheet, rowIndex, row) {
+  const name = row[2];
+  const email = row[4];
+  const finalSent = row[19]; // T: finalEmailSent
+
+  if (finalSent) return; // da gui email hoan thanh roi, khong lam gi them
+
+  let completed = {};
+  try { completed = JSON.parse(row[20] || '{}'); } catch (e) { completed = {}; }
+
+  let currentDay = -1;
+  for (let d = 0; d <= REMINDER_LAST_DAY; d++) {
+    if (!completed['d' + d]) { currentDay = d; break; }
+  }
+  const allDone = currentDay === -1; // da hoan thanh het d0..d21
+
+  if (allDone) {
+    sendReminderEmail('final', { name: name, email: email });
+    sheet.getRange(rowIndex, 20).setValue(new Date()); // T finalEmailSent
+    return;
+  }
+
+  if (currentDay === 0) return; // khong nhac Ngay 0, email xac nhan da lo phan nay
+
+  const trackedDay = Number(row[17]) || 0; // R reminderTrackedDay
+  let reminderCount = Number(row[18]) || 0; // S reminderCount
+
+  if (trackedDay !== currentDay) {
+    // Ngay moi vua mo khoa (hoc vien da xong ngay truoc do)
+    sendReminderEmail('unlocked', { name: name, email: email, day: currentDay });
+    sheet.getRange(rowIndex, 18).setValue(currentDay); // R
+    sheet.getRange(rowIndex, 19).setValue(0); // S
+    return;
+  }
+
+  if (reminderCount >= REMINDER_MAX_COUNT) return; // da nhac du 3 lan, ngung han
+
+  reminderCount += 1;
+  const type = reminderCount >= REMINDER_MAX_COUNT ? 'missedFinal' : 'missed';
+  sendReminderEmail(type, { name: name, email: email, day: currentDay });
+  sheet.getRange(rowIndex, 19).setValue(reminderCount); // S
+}
+
+function sendReminderEmail(type, p) {
+  const baseUrl = CONFIG.COURSE_URL || (CONFIG.SITE_URL + '/khoahoc');
+  const courseUrl = baseUrl + (p.day ? ('#d' + p.day) : '');
+  const name = p.name || 'bạn';
+  let subject, bodyHtml, bodyText;
+
+  if (type === 'unlocked') {
+    subject = 'Ngày ' + p.day + '/21 đã mở, tiếp tục nào';
+    bodyHtml = [
+      '<p>Chào ' + esc(name) + ',</p>',
+      '<p>Bạn đã hoàn thành Ngày ' + (p.day - 1) + '. Ngày ' + p.day + ' đã sẵn sàng.</p>',
+      ctaButton(courseUrl, 'Vào học Ngày ' + p.day),
+      '<p>Cứ đều đặn thế này nhé.</p>',
+      signOff()
+    ].join('\n');
+    bodyText = 'Chào ' + name + ',\n\nBan da hoan thanh Ngay ' + (p.day - 1) + '. Ngay ' + p.day + ' da san sang.\n\n' + courseUrl + '\n\nCu deu dan the nay nhe.\n- Quinn';
+  } else if (type === 'missed') {
+    subject = 'Bạn đã bỏ lỡ Ngày ' + p.day + '/21, quay lại hành trình nhé';
+    bodyHtml = [
+      '<p>Chào ' + esc(name) + ',</p>',
+      '<p>Ngày ' + p.day + ' của 21 Ngày Hiểu Mình đang chờ bạn. Mỗi ngày chỉ mất 15-20 phút thôi, đừng để một ngày bận rộn làm gián đoạn cả hành trình.</p>',
+      ctaButton(courseUrl, 'Vào học Ngày ' + p.day),
+      '<p>Hẹn gặp bạn trong đó.</p>',
+      signOff()
+    ].join('\n');
+    bodyText = 'Chào ' + name + ',\n\nNgay ' + p.day + ' cua 21 Ngay Hieu Minh dang cho ban. Moi ngay chi mat 15-20 phut thoi, dung de mot ngay ban ron lam gian doan ca hanh trinh.\n\n' + courseUrl + '\n\nHen gap ban trong do.\n- Quinn';
+  } else if (type === 'missedFinal') {
+    subject = 'Lần nhắc cuối, Ngày ' + p.day + '/21 vẫn đang chờ bạn';
+    bodyHtml = [
+      '<p>Chào ' + esc(name) + ',</p>',
+      '<p>Đây là lần thứ 3 mình nhắc về Ngày ' + p.day + ' rồi. Sau email này, mình sẽ ngừng làm phiền bạn.</p>',
+      '<p>Không phải vì mình không quan tâm, mà vì mình tôn trọng thời gian và lựa chọn của bạn. Tài khoản của bạn vẫn còn nguyên, không có hạn nào cả. Khi nào sẵn sàng, hành trình vẫn ở đó đợi bạn.</p>',
+      ctaButton(courseUrl, 'Quay lại Ngày ' + p.day),
+      '<p>Nếu có gì đang cản bạn, cứ reply email này hoặc nhắn mình qua nhóm Zalo, mình sẵn lòng nghe.</p>',
+      signOff()
+    ].join('\n');
+    bodyText = 'Chào ' + name + ',\n\nDay la lan thu 3 minh nhac ve Ngay ' + p.day + ' roi. Sau email nay, minh se ngung lam phien ban.\n\nKhong phai vi minh khong quan tam, ma vi minh ton trong thoi gian va lua chon cua ban. Tai khoan cua ban van con nguyen, khong co han nao ca.\n\n' + courseUrl + '\n\nNeu co gi dang can ban, cu reply email nay hoac nhan qua nhom Zalo.\n- Quinn';
+  } else if (type === 'final') {
+    subject = 'Bạn đã hoàn thành 21 Ngày Hiểu Mình';
+    bodyHtml = [
+      '<p>Chào ' + esc(name) + ',</p>',
+      '<p>21 ngày trước bạn bắt đầu hành trình này. Hôm nay bạn đã đi hết chặng đường, cảm ơn bạn đã nghiêm túc với chính mình suốt thời gian qua.</p>',
+      '<p>Nếu bạn cảm thấy đã hiểu mình hơn nhưng muốn có người đồng hành để biến điều đó thành kế hoạch cụ thể: tập gì, ăn gì, điều chỉnh ra sao, đó là lúc <strong>90 Ngày Chuyển Mình</strong> phù hợp với bạn.</p>',
+      '<p style="font-size:13px;color:#666"><em>(Link và thông tin chi tiết mình sẽ gửi riêng sau nhé, hiện chương trình đang hoàn thiện.)</em></p>',
+      '<p>Dù bạn chọn hướng nào tiếp theo, mình mong bạn giữ lại điều quan trọng nhất: bạn đã sẵn sàng.</p>',
+      signOff()
+    ].join('\n');
+    bodyText = 'Chào ' + name + ',\n\n21 ngay truoc ban bat dau hanh trinh nay. Hom nay ban da di het chang duong, cam on ban da nghiem tuc voi chinh minh suot thoi gian qua.\n\nNeu ban cam thay da hieu minh hon nhung muon co nguoi dong hanh de bien dieu do thanh ke hoach cu the, do la luc 90 Ngay Chuyen Minh phu hop voi ban. (Link se gui rieng sau, chuong trinh dang hoan thien.)\n\nDu ban chon huong nao tiep theo, minh mong ban giu lai dieu quan trong nhat: ban da san sang.\n- Quinn';
+  } else {
+    return;
+  }
+
+  MailApp.sendEmail({
+    to: p.email,
+    subject: subject,
+    htmlBody: wrapEmailBody(bodyHtml),
+    body: bodyText,
+    name: CONFIG.EMAIL_SENDER_NAME,
+    replyTo: CONFIG.EMAIL_REPLY_TO
+  });
+}
+
+function wrapEmailBody(innerHtml) {
+  return [
+    '<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"></head>',
+    '<body style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.7;color:#222;max-width:600px;margin:0 auto;padding:24px;background:#fff">',
+    '<div style="background:#060D1A;padding:20px 24px;margin-bottom:24px">',
+    '<p style="color:#D4B896;font-size:13px;letter-spacing:0.2em;font-weight:700;margin:0">21 NGÀY HIỂU MÌNH</p>',
+    '</div>',
+    innerHtml,
+    '<p style="font-size:13px;color:#888;margin-top:32px;border-top:1px solid #eee;padding-top:16px">21 Ngày Hiểu Mình · Quinn Nguyễn<br>' + esc(CONFIG.SITE_URL) + '</p>',
+    '</body></html>'
+  ].join('\n');
+}
+
+function ctaButton(url, label) {
+  return '<p style="margin:16px 0"><a href="' + url + '" style="display:inline-block;background:#D4B896;color:#0A0A0A;padding:12px 26px;border-radius:8px;text-decoration:none;font-weight:700;font-size:14px">' + esc(label) + ' &rarr;</a></p>';
+}
+
+function signOff() {
+  return '<p style="margin-top:20px">- Quinn</p>';
+}
+
+// Chay 1 lan de dat lich tu dong gui email nhac nho luc 6h sang moi ngay.
+// Gio chay theo mui gio cua du an Apps Script (kiem tra o banh rang Cai dat du an).
+function setupDailyReminderTrigger() {
+  const triggers = ScriptApp.getProjectTriggers();
+  triggers.forEach(function (t) {
+    if (t.getHandlerFunction() === 'dailyReminderJob') ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger('dailyReminderJob')
+    .timeBased()
+    .everyDays(1)
+    .atHour(6)
+    .create();
+  Logger.log('Da dat lich: dailyReminderJob se chay khoang 6h sang moi ngay.');
+}
+
+// Chay thu ngay bay gio de kiem tra (khong doi den 6h sang).
+function testDailyReminderJob() {
+  dailyReminderJob();
+  Logger.log('Da chay thu dailyReminderJob. Kiem tra Sheet cot R/S/T va hop thu cac hoc vien PAID.');
 }
 
 // ============================================================
@@ -500,6 +716,7 @@ function doPost(e) {
     if (body.action === 'updateOrder') return corsJson(updateOrder(body.orderId, body.data || {}));
     if (body.action === 'verifyLogin') return corsJson(verifyLogin(body.email, body.password));
     if (body.action === 'changePassword') return corsJson(changePassword(body.email, body.currentPassword, body.newPassword));
+    if (body.action === 'syncProgress') return corsJson(syncProgress(body.email, body.completed));
     if (body.content !== undefined && body.transferAmount !== undefined) {
       const key = (e.parameter && e.parameter.key) || '';
       if (key !== CONFIG.SEPAY_API_KEY) return corsJson({ success: false, error: 'Unauthorized' });
