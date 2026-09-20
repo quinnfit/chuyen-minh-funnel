@@ -1,6 +1,10 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    { "source": "/khoahoc", "has": [{ "type": "host", "value": "21ngay-hieuminh.vercel.app" }], "destination": "https://hocvien.quinnfit.vn/", "permanent": true },
+    { "source": "/:path*", "has": [{ "type": "host", "value": "21ngay-hieuminh.vercel.app" }], "destination": "https://hieuminh.quinnfit.vn/:path*", "permanent": true }
+  ],
   "rewrites": [
     { "source": "/", "has": [{ "type": "host", "value": "hocvien.quinnfit.vn" }], "destination": "/khoahoc.html" },
     { "source": "/", "destination": "/index.html" },
