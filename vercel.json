@@ -2,6 +2,7 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
+    { "source": "/", "has": [{ "type": "host", "value": "hocvien.quinnfit.vn" }], "destination": "/khoahoc.html" },
     { "source": "/", "destination": "/index.html" },
     { "source": "/dang-ky", "destination": "/dang-ky.html" },
     { "source": "/checkout", "destination": "/checkout.html" },
