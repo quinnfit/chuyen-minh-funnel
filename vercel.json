@@ -14,6 +14,6 @@
     { "source": "/privacy", "destination": "/privacy.html" },
     { "source": "/refund", "destination": "/refund.html" },
     { "source": "/tdee", "destination": "/tdee.html" },
-    { "source": "/hocvien", "destination": "/khoahoc.html" }
+    { "source": "/hocvien", "destination": "/hocvien.html" }
   ]
 }
