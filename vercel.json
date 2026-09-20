@@ -2,11 +2,11 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "redirects": [
-    { "source": "/khoahoc", "has": [{ "type": "host", "value": "21ngay-hieuminh.vercel.app" }], "destination": "https://hocvien.quinnfit.vn/", "permanent": true },
-    { "source": "/:path*", "has": [{ "type": "host", "value": "21ngay-hieuminh.vercel.app" }], "destination": "https://hieuminh.quinnfit.vn/:path*", "permanent": true }
+    { "source": "/khoahoc", "has": [{ "type": "host", "value": "21ngay-hieuminh.vercel.app" }], "destination": "https://hieuminh.quinnfit.vn/hocvien", "permanent": true },
+    { "source": "/:path*", "has": [{ "type": "host", "value": "21ngay-hieuminh.vercel.app" }], "destination": "https://hieuminh.quinnfit.vn/:path*", "permanent": true },
+    { "source": "/khoahoc", "destination": "/hocvien", "permanent": true }
   ],
   "rewrites": [
-    { "source": "/", "has": [{ "type": "host", "value": "hocvien.quinnfit.vn" }], "destination": "/khoahoc.html" },
     { "source": "/", "destination": "/index.html" },
     { "source": "/dang-ky", "destination": "/dang-ky.html" },
     { "source": "/checkout", "destination": "/checkout.html" },
@@ -14,6 +14,6 @@
     { "source": "/privacy", "destination": "/privacy.html" },
     { "source": "/refund", "destination": "/refund.html" },
     { "source": "/tdee", "destination": "/tdee.html" },
-    { "source": "/khoahoc", "destination": "/khoahoc.html" }
+    { "source": "/hocvien", "destination": "/khoahoc.html" }
   ]
 }

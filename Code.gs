@@ -14,7 +14,7 @@ const CONFIG = {
   EMAIL_REPLY_TO: 'quinnfit.training@gmail.com',
 
   ZALO_GROUP_URL: 'https://zalo.me/g/hu37f2kanss5wtvzpvfx',
-  COURSE_URL: 'https://21ngay-hieuminh.vercel.app/khoahoc',
+  COURSE_URL: 'https://hieuminh.quinnfit.vn/hocvien',
 
   PRODUCT_NAME: '21 Ngày Hiểu Mình',
   PRODUCT_PRICE: 499000,
@@ -32,7 +32,7 @@ const CONFIG = {
 
   HOTLINE: '__HOTLINE__',
   ADDRESS: 'Việt Nam',
-  SITE_URL: 'https://21ngay-hieuminh.vercel.app'
+  SITE_URL: 'https://hieuminh.quinnfit.vn'
 };
 
 // ============================================================
